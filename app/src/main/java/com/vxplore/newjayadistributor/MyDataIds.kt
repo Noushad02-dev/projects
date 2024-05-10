@@ -22,5 +22,19 @@ enum class MyDataIds {
     emailState,
     logout,
     Confirm,
-    dismiss
+    dismiss,
+    loadingState,
+    back,
+    orderReceive,
+    orderDetails,
+    orderConfirm,
+    orderTrack,
+    trackOrder,
+    dueDetails,
+    dueDelivery,
+    selectedCategoryId,
+    productQty,
+    myStocks,
+    stockUpdate,
+    add
 }

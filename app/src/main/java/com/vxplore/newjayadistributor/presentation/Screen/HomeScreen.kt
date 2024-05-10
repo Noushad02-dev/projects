@@ -408,7 +408,7 @@ fun HomeScreen(
                             )
                             .clip(RoundedCornerShape(4.dep))
                             .clickable {
-                                // notifier.notify(MyDataIds.storeDetails, it)
+                                 notifier.notify(MyDataIds.orderReceive, it)
                             }
                             .weight(.5f),
                         colors = CardDefaults.cardColors(Color.White),
@@ -471,7 +471,7 @@ fun HomeScreen(
                             )
                             .clip(RoundedCornerShape(4.dep))
                             .clickable {
-                                // notifier.notify(MyDataIds.storeDetails, it)
+                                notifier.notify(MyDataIds.myStocks, it)
                             }
                             .weight(.5f),
                         colors = CardDefaults.cardColors(Color.White),
@@ -540,7 +540,7 @@ fun HomeScreen(
                             )
                             .clip(RoundedCornerShape(4.dep))
                             .clickable {
-                                // notifier.notify(MyDataIds.storeDetails, it)
+                                 notifier.notify(MyDataIds.dueDelivery, it)
                             }
                             .weight(.5f),
                         colors = CardDefaults.cardColors(Color.White),
@@ -603,7 +603,7 @@ fun HomeScreen(
                             )
                             .clip(RoundedCornerShape(4.dep))
                             .clickable {
-                                // notifier.notify(MyDataIds.storeDetails, it)
+                                 notifier.notify(MyDataIds.trackOrder, it)
                             }
                             .weight(.5f),
                         colors = CardDefaults.cardColors(Color.White),

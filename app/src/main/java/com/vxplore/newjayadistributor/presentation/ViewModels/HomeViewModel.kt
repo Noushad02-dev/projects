@@ -16,13 +16,13 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repo: Repository
-):WirelessViewModel(){
+) : WirelessViewModel() {
 
     private val opendialog = mutableStateOf(false)
     private val nameState = mutableStateOf("")
     private val emailState = mutableStateOf("")
     private val routeState = mutableStateOf("")
-    private val userId  = mutableStateOf("")
+    private val userId = mutableStateOf("")
 
     override fun eventBusDescription(): EventBusDescription? {
         return null
@@ -39,20 +39,49 @@ class HomeViewModel @Inject constructor(
             MyDataIds.logout -> {
                 opendialog.value = !opendialog.value
             }
+
             MyDataIds.dismiss -> {
                 opendialog.value = !opendialog.value
             }
 
             MyDataIds.Confirm -> {
                 opendialog.value = !opendialog.value
-                doLogOut()
+                navigation {
+                    navigate(Routes.login.full) {
+                        popUpTo(Routes.home.full)
+                    }
+                }
+                //doLogOut()
             }
 
+            MyDataIds.orderReceive -> {
+                navigation {
+                    navigate(Routes.orderReceive.full)
+                }
+            }
+
+            MyDataIds.trackOrder -> {
+                navigation {
+                    navigate(Routes.trackOrder.full)
+                }
+            }
+
+            MyDataIds.dueDelivery -> {
+                navigation {
+                    navigate(Routes.dueDelivery.full)
+                }
+            }
+            MyDataIds.myStocks->{
+                navigation {
+                    navigate(Routes.myStock.full)
+                }
+            }
         }
     }
 
     override fun onStartUp(route: Route?, arguments: Bundle?) {
     }
+
     init {
         mapData(
             MyDataIds.opendialog to opendialog,

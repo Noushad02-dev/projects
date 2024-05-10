@@ -16,7 +16,7 @@ class PrefRepositoryImpl @Inject constructor(
     }
 
     override fun getIsLoggedIn(): Boolean {
-        return  myPref.getBoolean(isLoggedInKey,false)
+        return  myPref.getBoolean(isLoggedInKey,true)
     }
     override fun deleteUserId() {
         myPref.edit().remove(userIdKey).apply()
