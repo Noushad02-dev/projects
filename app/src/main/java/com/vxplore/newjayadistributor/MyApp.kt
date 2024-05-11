@@ -5,25 +5,33 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.debduttapanda.j3lib.MyScreen
+import com.vxplore.newjayadistributor.presentation.Screen.CartReviewScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryDetailsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryScreen
 import com.vxplore.newjayadistributor.presentation.Screen.HomeScreen
 import com.vxplore.newjayadistributor.presentation.Screen.LoginPage
+import com.vxplore.newjayadistributor.presentation.Screen.MyOffersScreen
 import com.vxplore.newjayadistributor.presentation.Screen.MyStockScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderDetailsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderReceiveScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderStatusScreen
+import com.vxplore.newjayadistributor.presentation.Screen.PlaceOrderScreen
 import com.vxplore.newjayadistributor.presentation.Screen.SplashScreen
+import com.vxplore.newjayadistributor.presentation.Screen.ThankYouScreen
 import com.vxplore.newjayadistributor.presentation.Screen.TrackOrderScreen
+import com.vxplore.newjayadistributor.presentation.ViewModels.CartReviewViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryDetailsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.HomeViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.LoginViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.MyOffersViewModels
 import com.vxplore.newjayadistributor.presentation.ViewModels.MyStockViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderDetailsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderReceiveViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderStatusViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.PlaceOrderViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.SplashViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.ThankYouViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.TrackOrderViewModel
 
 @Composable
@@ -93,6 +101,29 @@ fun MyApp() {
         ) {
             MyStockScreen()
         }
-
+        MyScreen(
+            navController, Routes.placeOrder,
+            wirelessViewModel = { hiltViewModel<PlaceOrderViewModel>() }
+        ) {
+            PlaceOrderScreen()
+        }
+        MyScreen(
+            navController, Routes.viewCart,
+            wirelessViewModel = { hiltViewModel<CartReviewViewModel>() }
+        ) {
+            CartReviewScreen()
+        }
+        MyScreen(
+            navController, Routes.thankYou,
+            wirelessViewModel = { hiltViewModel<ThankYouViewModel>() }
+        ) {
+            ThankYouScreen()
+        }
+        MyScreen(
+            navController, Routes.myOffers,
+            wirelessViewModel = { hiltViewModel<MyOffersViewModels>() }
+        ) {
+            MyOffersScreen()
+        }
     }
 }

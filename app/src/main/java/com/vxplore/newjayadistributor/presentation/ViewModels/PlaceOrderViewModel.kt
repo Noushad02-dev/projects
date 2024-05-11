@@ -4,23 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.debduttapanda.j3lib.InterCom
+import com.debduttapanda.j3lib.SoftInputMode
 import com.debduttapanda.j3lib.WirelessViewModel
 import com.debduttapanda.j3lib.models.EventBusDescription
 import com.debduttapanda.j3lib.models.Route
 import com.vxplore.newjayadistributor.MyDataIds
+import com.vxplore.newjayadistributor.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DueDeliveryDetailsViewModel @Inject constructor(
+class PlaceOrderViewModel @Inject constructor(
 ):WirelessViewModel(){
-    private val loadingState = mutableStateOf(false)
-    private val profilename = mutableStateOf("")
-    private val openDialog = mutableStateOf(false)
-    private val partiesSearch = mutableStateOf("")
-    private val selectedText = mutableStateOf("CB")
+    private val selectedCategoryTabId = mutableStateOf("")
     private val productQty = mutableStateOf("")
-    private val productPrice = mutableStateOf("")
+    private val loadingState = mutableStateOf(false)
+    private val selectedText = mutableStateOf("CB")
 
     fun setSelectedText(text: String) {
         selectedText.value = text
@@ -41,26 +40,18 @@ class DueDeliveryDetailsViewModel @Inject constructor(
             MyDataIds.back->{
                 popBackStack()
             }
-            MyDataIds.profilename->{
-                profilename.value = arg as String
-            }
-            MyDataIds.add->{
-                openDialog.value = true
-            }
-            MyDataIds.addProduct->{
-                openDialog.value = false
-            }
-            MyDataIds.cancelDialog->{
-                openDialog.value = false
-            }
-            MyDataIds.partiesSearch -> {
-                partiesSearch.value = arg as String
-            }
             MyDataIds.productQty->{
                 productQty.value = arg as String
             }
-            MyDataIds.productPrice->{
-                productPrice.value = arg as String
+            MyDataIds.stockUpdate->{
+                navigation {
+                    navigate(Routes.home.full)
+                }
+            }
+            MyDataIds.viewCart->{
+                navigation {
+                    navigate(Routes.viewCart.full)
+                }
             }
         }
     }
@@ -69,12 +60,10 @@ class DueDeliveryDetailsViewModel @Inject constructor(
     }
     init {
         mapData(
-            MyDataIds.loadingState to loadingState,
-            MyDataIds.profilename to profilename,
-            MyDataIds.partiesSearch to partiesSearch,
-            MyDataIds.openDialog to openDialog,
+            MyDataIds.selectedCategoryId to selectedCategoryTabId,
             MyDataIds.productQty to productQty,
-            MyDataIds.productPrice to productPrice,
-            )
+            MyDataIds.loadingState to loadingState,
+        )
+        setSoftInputMode(SoftInputMode.adjustPan)
     }
 }

@@ -36,5 +36,22 @@ enum class MyDataIds {
     productQty,
     myStocks,
     stockUpdate,
-    add
+    add,
+    update,
+    profilename,
+    openDialog,
+    onDissmiss,
+    searchList,
+    partiesSearch,
+    addProduct,
+    cancelDialog,
+    productPrice,
+    placeOrder,
+    viewCart,
+    addItem,
+    confirmPlaceOrder,
+    backToDashboard,
+    myOrders,
+    myOffers,
+    orderReceived
 }

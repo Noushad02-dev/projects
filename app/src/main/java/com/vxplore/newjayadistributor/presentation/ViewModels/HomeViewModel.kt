@@ -76,6 +76,24 @@ class HomeViewModel @Inject constructor(
                     navigate(Routes.myStock.full)
                 }
             }
+            MyDataIds.placeOrder->{
+                navigation {
+                    navigate(Routes.placeOrder.full)
+                }
+            }
+            MyDataIds.myOffers->{
+                navigation {
+                    navigate(Routes.myOffers.full)
+                }
+            }
+            MyDataIds.back->{
+                popBackStack()
+            }
+            MyDataIds.orderReceived->{
+                navigation {
+                    navigate(Routes.orderReceive.full)
+                }
+            }
         }
     }
 

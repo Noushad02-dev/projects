@@ -11,7 +11,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -26,48 +34,64 @@ import com.debduttapanda.j3lib.sep
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SplashScreen(
     versionName: State<String> = rememberStringState(id = MyDataIds.versionName),
-){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .background(color = Color(0xFFFFEB56))
-            .fillMaxSize()
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.jayasales),
-            contentDescription = "",
-            modifier = Modifier
-                .height(120.dep)
-                .width(196.dep),
-        )
-        Spacer(modifier = Modifier.height(12.dep))
-        Text(
-          "Jaya Distributor",
-            fontSize = 20.sep,
-            letterSpacing = (-0.03).sep,
-            color = Color(0xFF222222)
-        )
-    }
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier
-            .padding(bottom = 30.dep)
-            .fillMaxSize()
+) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                },
+                navigationIcon = {
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFFFFEB56)
+                )
+            )
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(it)
+                .background(color = Color(0xFFFFEB56))
+                .fillMaxSize()
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.jayasales),
+                contentDescription = "",
+                modifier = Modifier
+                    .height(120.dep)
+                    .width(196.dep),
+            )
+            Spacer(modifier = Modifier.height(12.dep))
+            Text(
+                "Jaya Distributor",
+                fontSize = 20.sep,
+                letterSpacing = (-0.03).sep,
+                color = Color(0xFF222222)
+            )
         }
-        Spacer(modifier = Modifier.height(200.dep))
-        Text(
-            text = "Version : ${versionName.value}",
-            fontSize = 14.sep,
-            color = Color.Black,
-            fontWeight = FontWeight.SemiBold
-        )
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .padding(bottom = 30.dep)
+                .fillMaxSize()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+            }
+            Spacer(modifier = Modifier.height(200.dep))
+            Text(
+                text = "Version : ${versionName.value}",
+                fontSize = 14.sep,
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }

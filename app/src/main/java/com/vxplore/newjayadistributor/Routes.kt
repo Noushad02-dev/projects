@@ -13,4 +13,8 @@ object Routes {
     val dueDelivery = Route("dueDelivery")
     val dueDeliveryDetails = Route("dueDeliveryDetails")
     val myStock = Route("myStock")
+    val placeOrder = Route("placeOrder")
+    val viewCart = Route("viewCart")
+    val thankYou = Route("thankYou")
+    val myOffers = Route("myOffers")
 }

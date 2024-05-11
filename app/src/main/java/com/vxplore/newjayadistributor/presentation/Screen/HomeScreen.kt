@@ -196,11 +196,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.orderReceived)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
-                        text = "Orders",
+                        text = "Order Received",
                         fontSize = 16.sep,
                         color = Color(0xFF1D1A1A)
                     )
@@ -209,7 +211,9 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.myStocks)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
@@ -222,7 +226,9 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.myOffers)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
@@ -235,11 +241,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.dueDelivery)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
-                        text = "My Orders",
+                        text = "Due Delivery",
                         fontSize = 16.sep,
                         color = Color(0xFF1D1A1A)
                     )
@@ -248,7 +256,9 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.placeOrder)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
@@ -261,7 +271,9 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            notifier.notify(MyDataIds.trackOrder)
+                        }
                         .padding(12.dep)
                 ) {
                     Text(
@@ -664,7 +676,7 @@ fun HomeScreen(
             ) {
                 Button(
                     onClick = {
-                       // notifier.notify(MyDataIds.signUpClick,)
+                        notifier.notify(MyDataIds.placeOrder,)
                               },
                     modifier = Modifier
                         .height(50.dep)
