@@ -52,18 +52,18 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun goToProperLogin() {
-        //if (repo.getIsLoggedIn()) {
+        if (repo.getIsLoggedIn()) {
             navigation {
                 navigate(Routes.home.full) {
                     popUpTo(Routes.splash.full)
                 }
             }
-       /* } else {
+        } else {
             navigation {
                 navigate(Routes.login.full) {
                     popUpTo(Routes.splash.full)
                 }
             }
-        }*/
+        }
     }
 }

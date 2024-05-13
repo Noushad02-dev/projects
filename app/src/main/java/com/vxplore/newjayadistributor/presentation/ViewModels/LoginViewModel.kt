@@ -162,19 +162,12 @@ class LoginViewModel @Inject constructor(
             MyDataIds.loading to loading,
             MyDataIds.recoverLoading to recoverLoading,
         )
-        setStatusBarColor(Color(0xFFD62B2B), true)
+        setStatusBarColor(Color(0xFFFFEB56), true)
     }
 
     private fun userLogin() {
-        loading.value = !loading.value
-        viewModelScope.launch {
-            delay(3000)
-            navigation {
-                navigate(Routes.home.full)
-                loading.value = !loading.value
-            }
-        }
-       /* viewModelScope.launch(Dispatchers.IO) {
+        loading.value = true
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = repo.login(username.value, password.value)
                 if (response != null && response.status) {
@@ -182,7 +175,7 @@ class LoginViewModel @Inject constructor(
                     loading.value = !loading.value
                     repo.saveUser(response.user_id)
                     viewModelScope.launch {
-                        delay(3000)
+                       // delay(3000)
                         repo.setIsLoggedIn(true)
                         repo.saveUser(response.user_id)
                         Log.d("ncj",response.user_id)
@@ -190,13 +183,15 @@ class LoginViewModel @Inject constructor(
                         Log.d("ncj",response.email)
                         repo.setName(response.name)
                         Log.d("ncj",response.name)
+                        repo.setPassCode(response.password)
+                        Log.d("ncj",response.password)
                         navigation {
                             navigate(Routes.home.full)
                             //
                             // loading.value = !loading.value
-                            *//* {
+                            /* {
                                  popUpTo(Routes.login.full)
-                             }*//*
+                             }*/
                         }
                     }
                 } else {
@@ -204,19 +199,19 @@ class LoginViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.d("dbbdk", e.message.toString())
+            }finally {
+                loading.value = false
             }
-        }*/
+        }
     }
 
     private fun recoverPass() {
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             try {
                 val response = repo.getOtp(recoverUsername.value)
                 if (response?.status == true) {
                     Log.d("hgbj", response.toString())
                     toast(response.message)
-                    repo.saveUser(response.user_id)
-                    Log.d("ncj",response.user_id)
                 } else {
                     toast(response!!.message)
                     toast("failed to send OTP")
@@ -225,20 +220,19 @@ class LoginViewModel @Inject constructor(
                 Log.e("hgbj", "Error: ${e.message}")
                 toast("Check network connection")
             }
-        }*/
+        }
     }
 
     private fun resetPassword() {
-       /* viewModelScope.launch {
+        viewModelScope.launch {
             try {
-                recoverUsername.value = repo.getUserId()!!
+                //recoverUsername.value = repo.getUserId()!!
                 Log.d("dbbdk",  recoverUsername.value)
                 val response =
                     repo.resetPassword(
                         recoverUsername.value,
                         otpInput.value,
                         recoverPassword.value,
-                        confirmPassword.value,
                     )
                 Log.d("dbbdk", response.toString())
                 if (response?.status == true) {
@@ -256,7 +250,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.d("dbbdk", e.message.toString())
             }
-        }*/
+        }
     }
 
     private fun clearRecoverInputField() {

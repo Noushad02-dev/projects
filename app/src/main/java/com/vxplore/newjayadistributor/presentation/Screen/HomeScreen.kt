@@ -72,9 +72,18 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     notifier: NotificationService = rememberNotifier(),
     openLogoutDialog: Boolean = boolState(key = MyDataIds.opendialog).value,
-    nameState : State<String> = stringState(key = MyDataIds.nameState),
+    nameState: State<String> = stringState(key = MyDataIds.nameState),
     emailState: State<String> = stringState(key = MyDataIds.emailState),
-){
+    receivedCountState: State<String> = stringState(key = MyDataIds.receivedCountState),
+    receivedAmountState: State<String> = stringState(key = MyDataIds.receivedAmountState),
+    stockCountState: State<String> = stringState(key = MyDataIds.StockCountState),
+    stockAmountState: State<String> = stringState(key = MyDataIds.StockAmountState),
+    dueDeliveryCountState: State<String> = stringState(key = MyDataIds.dueDeliveryCountState),
+    dueDeliveryAmountState: State<String> = stringState(key = MyDataIds.dueDeliveryAmountState),
+    trackCountState: State<String> = stringState(key = MyDataIds.trackCountState),
+    trackAmountState: State<String> = stringState(key = MyDataIds.trackAmountState),
+    loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
+) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -134,7 +143,7 @@ fun HomeScreen(
                     )
                     {
                         Text(
-                            text = "nameState.value",
+                            text = nameState.value,
                             fontSize = 18.sep,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF222222)
@@ -152,7 +161,7 @@ fun HomeScreen(
                                 modifier = Modifier.size(width = 16.dep, height = 20.dep)
                             )
                             Text(
-                                text = "emailState.value",
+                                text = emailState.value,
                                 fontSize = 12.sep,
                                 color = Color.DarkGray
                             )
@@ -352,7 +361,7 @@ fun HomeScreen(
                     title = {
                         Image(
                             painter = painterResource(id = R.drawable.jayasales),
-                            contentDescription ="",
+                            contentDescription = "",
                             modifier = Modifier
                                 .height(60.dp)
                                 .width(100.dp),
@@ -397,310 +406,379 @@ fun HomeScreen(
             },
         )
         {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-            ){
-                Spacer(modifier = Modifier.height(20.dep))
-                Row (
+          /*  if (loadingState.value) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ){
-                    Card(
-                        modifier = Modifier
-                            .height(120.dep)
-                            .fillMaxWidth()
-                            .shadow(
-                                2.dep,
-                                RoundedCornerShape(4.dep),
-                                clip = true,
-                                DefaultShadowColor
-                            )
-                            .clip(RoundedCornerShape(4.dep))
-                            .clickable {
-                                 notifier.notify(MyDataIds.orderReceive, it)
-                            }
-                            .weight(.5f),
-                        colors = CardDefaults.cardColors(Color.White),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dep,
-                            focusedElevation = 10.dep,
-                        ),
-                        shape = RoundedCornerShape(4.dep),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .background(
-                                    Color(0xFF699E73),
-                                    RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
-                                )
-                                .fillMaxSize()
-                                .weight(.7f)
-                                .padding(horizontal = 12.dep)
-                                .padding(vertical = 8.dep),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Order Received",
-                                fontSize = 16.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                text = "2",
-                                fontSize = 28.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                // .fillMaxSize()
-                                .weight(.3f)
-                                .padding(8.dep)
-                        ){
-                            Text(
-                                text = "₹ 1544500",
-                                fontSize = 14.sep,
-                                color = Color(0xFF575151),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(12.dep))
-                    Card(
-                        modifier = Modifier
-                            .height(120.dep)
-                            .fillMaxWidth()
-                            .shadow(
-                                2.dep,
-                                RoundedCornerShape(4.dep),
-                                clip = true,
-                                DefaultShadowColor
-                            )
-                            .clip(RoundedCornerShape(4.dep))
-                            .clickable {
-                                notifier.notify(MyDataIds.myStocks, it)
-                            }
-                            .weight(.5f),
-                        colors = CardDefaults.cardColors(Color.White),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dep,
-                            focusedElevation = 10.dep,
-                        ),
-                        shape = RoundedCornerShape(4.dep),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .background(
-                                    Color(0xFF3B3B3B),
-                                    RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
-                                )
-                                .fillMaxSize()
-                                .weight(.7f)
-                                .padding(horizontal = 12.dep)
-                                .padding(vertical = 8.dep),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Stock",
-                                fontSize = 16.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                text = "5000",
-                                fontSize = 28.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                // .fillMaxSize()
-                                .weight(.3f)
-                                .padding(8.dep)
-                        ){
-                            Text(
-                                text = "₹ 1544500",
-                                fontSize = 14.sep,
-                                color = Color(0xFF575151),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(20.dep))
-                Row (
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ){
-                    Card(
-                        modifier = Modifier
-                            .height(120.dep)
-                            .fillMaxWidth()
-                            .shadow(
-                                2.dep,
-                                RoundedCornerShape(4.dep),
-                                clip = true,
-                                DefaultShadowColor
-                            )
-                            .clip(RoundedCornerShape(4.dep))
-                            .clickable {
-                                 notifier.notify(MyDataIds.dueDelivery, it)
-                            }
-                            .weight(.5f),
-                        colors = CardDefaults.cardColors(Color.White),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dep,
-                            focusedElevation = 10.dep,
-                        ),
-                        shape = RoundedCornerShape(4.dep),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .background(
-                                    Color(0xFF3B3B3B),
-                                    RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
-                                )
-                                .fillMaxSize()
-                                .weight(.7f)
-                                .padding(horizontal = 12.dep)
-                                .padding(vertical = 8.dep),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Due Delivery",
-                                fontSize = 16.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                text = "4",
-                                fontSize = 28.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                // .fillMaxSize()
-                                .weight(.3f)
-                                .padding(8.dep)
-                        ){
-                            Text(
-                                text = "₹ 1544500",
-                                fontSize = 14.sep,
-                                color = Color(0xFF575151),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(12.dep))
-                    Card(
-                        modifier = Modifier
-                            .height(120.dep)
-                            .fillMaxWidth()
-                            .shadow(
-                                2.dep,
-                                RoundedCornerShape(4.dep),
-                                clip = true,
-                                DefaultShadowColor
-                            )
-                            .clip(RoundedCornerShape(4.dep))
-                            .clickable {
-                                 notifier.notify(MyDataIds.trackOrder, it)
-                            }
-                            .weight(.5f),
-                        colors = CardDefaults.cardColors(Color.White),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dep,
-                            focusedElevation = 10.dep,
-                        ),
-                        shape = RoundedCornerShape(4.dep),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .background(
-                                    Color(0xFF3B3B3B),
-                                    RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
-                                )
-                                .fillMaxSize()
-                                .weight(.7f)
-                                .padding(horizontal = 12.dep)
-                                .padding(vertical = 8.dep),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Track Order",
-                                fontSize = 16.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                text = "560",
-                                fontSize = 28.sep,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                // .fillMaxSize()
-                                .weight(.3f)
-                                .padding(8.dep)
-                        ){
-                            Text(
-                                text = "₹ 1544500",
-                                fontSize = 14.sep,
-                                color = Color(0xFF575151),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier
-                    /*.padding(horizontal = 24.dep)
-                    .padding(bottom = 60.dep)*/
-                    .fillMaxSize()
-            ) {
-                Button(
-                    onClick = {
-                        notifier.notify(MyDataIds.placeOrder,)
-                              },
-                    modifier = Modifier
-                        .height(50.dep)
-                        .fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dep,
-                        pressedElevation = 10.dep
-                    ),
-                    shape = RectangleShape
+                        //.padding(bottom = 60.dep)
+                        .fillMaxSize()
                 ) {
-                  /*  if (loading.value) {
-                        CircularProgressIndicator(
-                            color = Color.White
-                        )
-                    } else {*/
+                    CircularProgressIndicator(
+                        color = Color(0xFF699E73),
+                    )
+                }
+            } else {*/
+                Column(
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(20.dep))
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        if (loadingState.value) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    //.padding(bottom = 60.dep)
+                                    .fillMaxSize()
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF699E73),
+                                )
+                            }
+                        } else {
+                            Card(
+                                modifier = Modifier
+                                    .height(120.dep)
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        2.dep,
+                                        RoundedCornerShape(4.dep),
+                                        clip = true,
+                                        DefaultShadowColor
+                                    )
+                                    .clip(RoundedCornerShape(4.dep))
+                                    .clickable {
+                                        notifier.notify(MyDataIds.orderReceive, it)
+                                    }
+                                    .weight(.5f),
+                                colors = CardDefaults.cardColors(Color.White),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dep,
+                                    focusedElevation = 10.dep,
+                                ),
+                                shape = RoundedCornerShape(4.dep),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0xFF699E73),
+                                            RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
+                                        )
+                                        .fillMaxSize()
+                                        .weight(.7f)
+                                        .padding(horizontal = 12.dep)
+                                        .padding(vertical = 8.dep),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "Order Received",
+                                        fontSize = 16.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text = receivedCountState.value,
+                                        fontSize = 28.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        // .fillMaxSize()
+                                        .weight(.3f)
+                                        .padding(8.dep)
+                                ) {
+                                    Text(
+                                        text = receivedAmountState.value,
+                                        fontSize = 14.sep,
+                                        color = Color(0xFF575151),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(12.dep))
+                        if (loadingState.value) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    //.padding(bottom = 60.dep)
+                                    .fillMaxSize()
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF699E73),
+                                )
+                            }
+                        } else {
+                            Card(
+                                modifier = Modifier
+                                    .height(120.dep)
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        2.dep,
+                                        RoundedCornerShape(4.dep),
+                                        clip = true,
+                                        DefaultShadowColor
+                                    )
+                                    .clip(RoundedCornerShape(4.dep))
+                                    .clickable {
+                                        notifier.notify(MyDataIds.myStocks, it)
+                                    }
+                                    .weight(.5f),
+                                colors = CardDefaults.cardColors(Color.White),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dep,
+                                    focusedElevation = 10.dep,
+                                ),
+                                shape = RoundedCornerShape(4.dep),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0xFF3B3B3B),
+                                            RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
+                                        )
+                                        .fillMaxSize()
+                                        .weight(.7f)
+                                        .padding(horizontal = 12.dep)
+                                        .padding(vertical = 8.dep),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "My Stock",
+                                        fontSize = 16.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text = stockCountState.value,
+                                        fontSize = 28.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        // .fillMaxSize()
+                                        .weight(.3f)
+                                        .padding(8.dep)
+                                ) {
+                                    Text(
+                                        text = stockAmountState.value,
+                                        fontSize = 14.sep,
+                                        color = Color(0xFF575151),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(20.dep))
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        if (loadingState.value) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    //.padding(bottom = 60.dep)
+                                    .fillMaxSize()
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF699E73),
+                                )
+                            }
+                        } else {
+                            Card(
+                                modifier = Modifier
+                                    .height(120.dep)
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        2.dep,
+                                        RoundedCornerShape(4.dep),
+                                        clip = true,
+                                        DefaultShadowColor
+                                    )
+                                    .clip(RoundedCornerShape(4.dep))
+                                    .clickable {
+                                        notifier.notify(MyDataIds.dueDelivery, it)
+                                    }
+                                    .weight(.5f),
+                                colors = CardDefaults.cardColors(Color.White),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dep,
+                                    focusedElevation = 10.dep,
+                                ),
+                                shape = RoundedCornerShape(4.dep),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0xFF3B3B3B),
+                                            RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
+                                        )
+                                        .fillMaxSize()
+                                        .weight(.7f)
+                                        .padding(horizontal = 12.dep)
+                                        .padding(vertical = 8.dep),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "Due Delivery",
+                                        fontSize = 16.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text = dueDeliveryCountState.value,
+                                        fontSize = 28.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        // .fillMaxSize()
+                                        .weight(.3f)
+                                        .padding(8.dep)
+                                ) {
+                                    Text(
+                                        text = dueDeliveryAmountState.value,
+                                        fontSize = 14.sep,
+                                        color = Color(0xFF575151),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(12.dep))
+                        if (loadingState.value) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    //.padding(bottom = 60.dep)
+                                    .fillMaxSize()
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF699E73),
+                                )
+                            }
+                        } else {
+                            Card(
+                                modifier = Modifier
+                                    .height(120.dep)
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        2.dep,
+                                        RoundedCornerShape(4.dep),
+                                        clip = true,
+                                        DefaultShadowColor
+                                    )
+                                    .clip(RoundedCornerShape(4.dep))
+                                    .clickable {
+                                        notifier.notify(MyDataIds.trackOrder, it)
+                                    }
+                                    .weight(.5f),
+                                colors = CardDefaults.cardColors(Color.White),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dep,
+                                    focusedElevation = 10.dep,
+                                ),
+                                shape = RoundedCornerShape(4.dep),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0xFF3B3B3B),
+                                            RoundedCornerShape(topStart = 4.dep, topEnd = 4.dep)
+                                        )
+                                        .fillMaxSize()
+                                        .weight(.7f)
+                                        .padding(horizontal = 12.dep)
+                                        .padding(vertical = 8.dep),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "Track Order",
+                                        fontSize = 16.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text = trackCountState.value,
+                                        fontSize = 28.sep,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        // .fillMaxSize()
+                                        .weight(.3f)
+                                        .padding(8.dep)
+                                ) {
+                                    Text(
+                                        text = trackAmountState.value,
+                                        fontSize = 14.sep,
+                                        color = Color(0xFF575151),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier
+                        /*.padding(horizontal = 24.dep)
+                    .padding(bottom = 60.dep)*/
+                        .fillMaxSize()
+                ) {
+                    Button(
+                        onClick = {
+                            notifier.notify(MyDataIds.placeOrder)
+                        },
+                        modifier = Modifier
+                            .height(50.dep)
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dep,
+                            pressedElevation = 10.dep
+                        ),
+                        shape = RectangleShape
+                    ) {
+                        /*  *//*  if (loading.value) {
+                          CircularProgressIndicator(
+                               color = Color(0xFF699E73),
+                          )
+                      } else {*/
                         Text(
                             "+ Place Order",
                             fontSize = 18.sep,
                             color = Color.White
                         )
-                    //}
+                    }
                 }
-            }
+            //}
         }
     }
 }

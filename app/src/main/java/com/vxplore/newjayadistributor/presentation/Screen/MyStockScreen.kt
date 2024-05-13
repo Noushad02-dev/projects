@@ -1,6 +1,5 @@
 package com.vxplore.newjayadistributor.presentation.Screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -27,6 +27,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,11 +52,14 @@ import coil.compose.AsyncImage
 import com.debduttapanda.j3lib.NotificationService
 import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
+import com.debduttapanda.j3lib.intState
+import com.debduttapanda.j3lib.listState
 import com.debduttapanda.j3lib.rememberNotifier
 import com.debduttapanda.j3lib.sep
 import com.debduttapanda.j3lib.stringState
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.R
+import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +67,9 @@ fun MyStockScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     selectedCategoryId: State<String> = stringState(key = MyDataIds.selectedCategoryId),
-    productQty: State<String> = stringState(key = MyDataIds.productQty)
+    productQty: State<String> = stringState(key = MyDataIds.productQty),
+    categoryList: SnapshotStateList<CategoriesDataResponse.CategoriesData> = listState(key = MyDataIds.categoryList),
+    selectedTabIndex: State<Int> = intState(key = MyDataIds.brandChange),
 ) {
     var selectedItem by remember { mutableStateOf(0) }
     Scaffold(
@@ -108,16 +118,41 @@ fun MyStockScreen(
             ){*/
 
             Spacer(modifier = Modifier.height(16.dep))
-            LazyRow(
+            ScrollableTabRow(
+                selectedTabIndex = selectedTabIndex.value,
+                contentColor = Color.Black,
+                containerColor = Color.Transparent,
+                edgePadding = 0.dep,
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 8.dep),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dep)
-            ) {
-                items(40) { index ->
-                    ItemCategoryTabItemUi(
-                        isSelected = index == selectedItem,
-                        onClick = { selectedItem = index }
+                indicator = { tabPositions ->
+                    if (selectedTabIndex.value > -1 && tabPositions.isNotEmpty()) {
+                        TabRowDefaults.Indicator(
+                            modifier = Modifier.tabIndicatorOffset(
+                                currentTabPosition = tabPositions[selectedTabIndex.value]
+                            ),
+                            color = Color.Red
+                        )
+                    }
+                }
+            )
+            {
+                categoryList.forEachIndexed { tabIndex, tab ->
+                    Tab(
+                        selected = selectedTabIndex.value == tabIndex,
+                        onClick = {
+                            notifier.notify(MyDataIds.brandChange, tabIndex)
+                        },
+                        text = {
+                            Text(
+                                text = tab.name,
+                                fontSize = 12.sep,
+                                fontWeight = FontWeight.Medium
+                            )
+                        },
+                        modifier = Modifier
+                            .weight(1f),
+                        selectedContentColor = Color.Red,
+                        unselectedContentColor = Color.Black
                     )
                 }
             }
@@ -269,20 +304,23 @@ fun MyStockScreen(
 
 @Composable
 fun ItemCategoryTabItemUi(
-    isSelected: Boolean,
-    onClick: () -> Unit
+    index: Int,
+    it: CategoriesDataResponse.CategoriesData,
+    selectedCategoryId: String,
+    notifier: NotificationService = rememberNotifier(),
 ) {
     Button(
-        onClick = onClick,
-        colors = if (isSelected)
+        onClick = { notifier.notify(MyDataIds.categoryChange, index) },
+        colors = if (it.uid == selectedCategoryId)
             ButtonDefaults.buttonColors(Color(0XFF1FB574))
         else
             ButtonDefaults.buttonColors(Color.White)
     ) {
         Text(
-            text = "Jaya",
+            text = it.name,
             fontSize = 14.sep,
-            color = if (isSelected) Color.White else Color.Black
+            color = if (it.uid == selectedCategoryId) Color.White else Color.Black
         )
     }
 }
+

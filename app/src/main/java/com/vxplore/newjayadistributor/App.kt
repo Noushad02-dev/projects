@@ -49,7 +49,7 @@ class Products{
 
 class Cart {
     private val productQuantity = mutableMapOf<String, Int>()
-    fun add(id: String, quantity: Int){
+    fun add(id: String, quantity: Int,unit: String){
         val prevQuantity = productQuantity[id]?:0
         val newQuantity = (prevQuantity + quantity).coerceAtLeast(0)
         if(newQuantity==0){

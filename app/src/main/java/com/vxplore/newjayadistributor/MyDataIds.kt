@@ -53,5 +53,19 @@ enum class MyDataIds {
     backToDashboard,
     myOrders,
     myOffers,
-    orderReceived
+    orderReceived,
+    receivedCountState,
+    receivedAmountState,
+    StockCountState,
+    StockAmountState,
+    dueDeliveryCountState,
+    dueDeliveryAmountState,
+    trackCountState,
+    trackAmountState,
+    productSearch,
+    categoryList,
+    categoryChange,
+    productList,
+    categoryidClick,
+    brandChange
 }

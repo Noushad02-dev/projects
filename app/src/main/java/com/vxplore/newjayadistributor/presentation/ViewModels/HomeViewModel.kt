@@ -1,8 +1,11 @@
 package com.vxplore.newjayadistributor.presentation.ViewModels
 
 import android.os.Bundle
+import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewModelScope
 import com.debduttapanda.j3lib.InterCom
 import com.debduttapanda.j3lib.WirelessViewModel
 import com.debduttapanda.j3lib.models.EventBusDescription
@@ -11,6 +14,7 @@ import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,9 +25,26 @@ class HomeViewModel @Inject constructor(
     private val opendialog = mutableStateOf(false)
     private val nameState = mutableStateOf("")
     private val emailState = mutableStateOf("")
-    private val routeState = mutableStateOf("")
-    private val userId = mutableStateOf("")
+    private val receivedCount = mutableStateOf("")
+    private val receivedAmount = mutableStateOf("")
+    private val StockCount = mutableStateOf("")
+    private val StockAmount = mutableStateOf("")
+    private val dueDeliveryCount = mutableStateOf("")
+    private val dueDeliveryAmount = mutableStateOf("")
+    private val trackCount = mutableStateOf("")
+    private val trackAmount = mutableStateOf("")
+    private val loadingState = mutableStateOf(false)
+    private val user_id = mutableStateOf("")
+    private val password = mutableStateOf("")
 
+    val receivedCountState: State<String> get() = receivedCount
+    val receivedAmountState: State<String> get() = receivedAmount
+    val StockCountState: State<String> get() = StockCount
+    val StockAmountState: State<String> get() = StockAmount
+    val dueDeliveryCountState: State<String> get() = dueDeliveryCount
+    val dueDeliveryAmountState: State<String> get() = dueDeliveryAmount
+    val trackCountState: State<String> get() = trackCount
+    val trackAmountState: State<String> get() = trackAmount
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -51,7 +72,7 @@ class HomeViewModel @Inject constructor(
                         popUpTo(Routes.home.full)
                     }
                 }
-                //doLogOut()
+                doLogOut()
             }
 
             MyDataIds.orderReceive -> {
@@ -71,25 +92,30 @@ class HomeViewModel @Inject constructor(
                     navigate(Routes.dueDelivery.full)
                 }
             }
-            MyDataIds.myStocks->{
+
+            MyDataIds.myStocks -> {
                 navigation {
                     navigate(Routes.myStock.full)
                 }
             }
-            MyDataIds.placeOrder->{
+
+            MyDataIds.placeOrder -> {
                 navigation {
                     navigate(Routes.placeOrder.full)
                 }
             }
-            MyDataIds.myOffers->{
+
+            MyDataIds.myOffers -> {
                 navigation {
                     navigate(Routes.myOffers.full)
                 }
             }
-            MyDataIds.back->{
+
+            MyDataIds.back -> {
                 popBackStack()
             }
-            MyDataIds.orderReceived->{
+
+            MyDataIds.orderReceived -> {
                 navigation {
                     navigate(Routes.orderReceive.full)
                 }
@@ -105,8 +131,23 @@ class HomeViewModel @Inject constructor(
             MyDataIds.opendialog to opendialog,
             MyDataIds.nameState to nameState,
             MyDataIds.emailState to emailState,
+            MyDataIds.loadingState to loadingState,
+            MyDataIds.receivedCountState to receivedCountState,
+            MyDataIds.receivedAmountState to receivedAmountState,
+            MyDataIds.StockCountState to StockCountState,
+            MyDataIds.StockAmountState to StockAmountState,
+            MyDataIds.dueDeliveryCountState to dueDeliveryCountState,
+            MyDataIds.dueDeliveryAmountState to dueDeliveryAmountState,
+            MyDataIds.trackCountState to trackCountState,
+            MyDataIds.trackAmountState to trackAmountState,
+            MyDataIds.loadingState to loadingState,
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
+        viewModelScope.launch {
+            nameState.value = repo.getName()!!
+            emailState.value = repo.getEmailId()!!
+        }
+        dashboard()
     }
 
     private fun doLogOut() {
@@ -115,6 +156,32 @@ class HomeViewModel @Inject constructor(
         navigation {
             navigate(Routes.login.full) {
                 popUpTo(Routes.home.full)
+            }
+        }
+    }
+
+    private fun dashboard() {
+        loadingState.value = true
+        viewModelScope.launch {
+            user_id.value = repo.getUserId()!!
+            password.value = repo.getPassCode()!!
+            try {
+                val response =  repo.dashBoard(user_id.value,password.value)
+                if (response?.status == true){
+                    val list = response.data
+                    receivedCount.value = list.order_received.count.toString()
+                    receivedAmount.value = list.order_received.amount_string
+                    StockCount.value = list.my_stock.count.toString()
+                    StockAmount.value = list.my_stock.amount_string
+                    dueDeliveryCount.value = list.due_delivery.count.toString()
+                    dueDeliveryAmount.value = list.due_delivery.amount_string
+                    trackCount.value = list.track_order.count.toString()
+                    trackAmount.value = list.track_order.amount_string
+                }
+            }catch (e: Exception) {
+                Log.e("hgbj", "Error: ${e.message}")
+            }finally {
+                loadingState.value = false
             }
         }
     }
