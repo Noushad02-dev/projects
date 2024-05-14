@@ -19,4 +19,9 @@ interface PrefRepository {
 
     fun setCategory(category: String?)
     fun getCategory() : String?
+
+    fun setCartId(cartId: String?)
+    fun getCartId() : String?
+    fun setLocationId(locationId: String?)
+    fun getLocationId() : String?
 }

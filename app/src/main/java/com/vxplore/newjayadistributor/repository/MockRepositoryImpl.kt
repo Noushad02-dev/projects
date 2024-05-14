@@ -5,10 +5,13 @@ import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
 import com.vxplore.newjayadistributor.model.DashBoardDataResponse
+import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
+import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
+import com.vxplore.newjayadistributor.model.ShowCartDataResponse
 import com.vxplore.newjayadistributor.model.ViewCartDataResponse
 import com.vxplore.newjayadistributor.repository.preference.PrefRepository
 import javax.inject.Inject
@@ -65,6 +68,22 @@ class MockRepositoryImpl @Inject constructor(
 
     override fun getCategory(): String? {
         return myPref.getCategory()
+    }
+
+    override fun setCartId(cartId: String?) {
+       myPref.setCartId(cartId)
+    }
+
+    override fun getCartId(): String? {
+        return myPref.getCartId()
+    }
+
+    override fun setLocationId(locationId: String?) {
+        myPref.setLocationId(locationId)
+    }
+
+    override fun getLocationId(): String? {
+       return myPref.getLocationId()
     }
 
     override suspend fun login(email: String, password: String): LoginDataResponse? {
@@ -137,6 +156,75 @@ class MockRepositoryImpl @Inject constructor(
             response.body()
         }else{
             Log.e("Repository", "Error: ${response.code()}")
+            null
+        }
+    }
+
+    override suspend fun showCart(userId: String, password: String): ShowCartDataResponse? {
+        val response = apiHelper.showCart(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun remove(user_id: String, cart_id: String): ResetDataResponse? {
+        val response = apiHelper.remove(user_id, cart_id)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun fetchLocation(
+        userId: String,
+        password: String
+    ): FetchLocationDataResponse? {
+        val response = apiHelper.fetchLocation(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun searchLocation(
+        user_id: String,
+        search_text: String,
+        password: String
+    ): LocationDataResponse? {
+        val response = apiHelper.searchLocation(user_id, search_text, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun saveLocation(
+        user_id: String,
+        location_id: String,
+        password: String
+    ): ResetDataResponse? {
+        val response = apiHelper.saveLocation(user_id, location_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun placeOrder(
+        user_id: String,
+        location_id: String,
+        password: String
+    ): ResetDataResponse? {
+        val response = apiHelper.placeOrder(user_id, location_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
             null
         }
     }

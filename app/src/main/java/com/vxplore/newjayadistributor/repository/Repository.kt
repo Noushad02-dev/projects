@@ -4,10 +4,13 @@ import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
 import com.vxplore.newjayadistributor.model.DashBoardDataResponse
+import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
+import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
+import com.vxplore.newjayadistributor.model.ShowCartDataResponse
 import com.vxplore.newjayadistributor.model.ViewCartDataResponse
 
 interface Repository {
@@ -27,6 +30,10 @@ interface Repository {
 
     fun setCategory(category: String?)
     fun getCategory() : String?
+    fun setCartId(cartId: String?)
+    fun getCartId() : String?
+    fun setLocationId(locationId: String?)
+    fun getLocationId() : String?
 
 
     suspend fun login(email : String, password : String) : LoginDataResponse?
@@ -40,4 +47,16 @@ interface Repository {
         password: String,
         products: List<AllProducts>
     ): ViewCartDataResponse?
+    suspend fun showCart(
+        userId: String,
+        password: String,
+    ): ShowCartDataResponse?
+    suspend fun remove(user_id: String, cart_id: String) : ResetDataResponse?
+    suspend fun fetchLocation(
+        userId: String,
+        password: String,
+    ): FetchLocationDataResponse?
+    suspend fun searchLocation(user_id: String, search_text: String, password: String) : LocationDataResponse?
+    suspend fun saveLocation(user_id: String, location_id: String, password: String) : ResetDataResponse?
+    suspend fun placeOrder(user_id: String, location_id: String, password: String) : ResetDataResponse?
 }

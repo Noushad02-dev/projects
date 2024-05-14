@@ -32,7 +32,7 @@ class PlaceOrderViewModel @Inject constructor(
     private val selectedBrandTabId = mutableStateOf(0)
     private val productQty = mutableStateOf("")
     private val loadingState = mutableStateOf(false)
-    private val selectedText = mutableStateOf("CB")
+    private val selectedText = mutableStateOf("unit_cb")
     private val searchProductQuery = mutableStateOf("")
     private val categories = mutableStateListOf<CategoriesDataResponse.CategoriesData>()
     private val password = mutableStateOf("")
@@ -69,15 +69,8 @@ class PlaceOrderViewModel @Inject constructor(
             MyDataIds.productQty -> {
                 productQty.value = arg as String
             }
-            MyDataIds.stockUpdate -> {
-                navigation {
-                    navigate(Routes.home.full)
-                }
-            }
             MyDataIds.viewCart -> {
-                navigation {
-                    navigate(Routes.viewCart.full)
-                }
+                viewCart()
             }
             MyDataIds.productSearch -> {
                 searchProductQuery.value = arg as String
@@ -228,7 +221,7 @@ class PlaceOrderViewModel @Inject constructor(
                 val productsInCart = App.cart.get().filter { (_, quantity) ->
                     quantity > 0
                 }.map { (productId, quantity) ->
-                    AllProducts(productId, quantity,selectedText.value)
+                    AllProducts(productId, quantity, selectedText.value)
                 }
 
                 if (productsInCart.isNotEmpty()) {
@@ -253,14 +246,14 @@ class PlaceOrderViewModel @Inject constructor(
                         "No products with quantity greater than 0 to send to the server"
                     )
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 //handleNoConnectivity()
                 Log.d("fgffg", "${e.message}")
-            }
-            finally {
+            } finally {
                 loadingState.value = false
             }
         }
     }
+
 
 }

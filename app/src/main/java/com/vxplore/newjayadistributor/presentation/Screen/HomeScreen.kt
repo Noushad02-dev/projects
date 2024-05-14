@@ -296,6 +296,21 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            notifier.notify(MyDataIds.deliveryPoints)
+                        }
+                        .padding(12.dep)
+                ) {
+                    Text(
+                        text = "Delivery Points",
+                        fontSize = 16.sep,
+                        color = Color(0xFF1D1A1A)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
                             notifier.notify(MyDataIds.logout)
                         }
                         .padding(12.dep)

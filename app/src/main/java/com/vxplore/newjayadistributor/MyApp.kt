@@ -5,7 +5,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.debduttapanda.j3lib.MyScreen
+import com.vxplore.newjayadistributor.presentation.Screen.AddLocationScreen
 import com.vxplore.newjayadistributor.presentation.Screen.CartReviewScreen
+import com.vxplore.newjayadistributor.presentation.Screen.DeliveryPointsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryDetailsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryScreen
 import com.vxplore.newjayadistributor.presentation.Screen.HomeScreen
@@ -19,7 +21,9 @@ import com.vxplore.newjayadistributor.presentation.Screen.PlaceOrderScreen
 import com.vxplore.newjayadistributor.presentation.Screen.SplashScreen
 import com.vxplore.newjayadistributor.presentation.Screen.ThankYouScreen
 import com.vxplore.newjayadistributor.presentation.Screen.TrackOrderScreen
+import com.vxplore.newjayadistributor.presentation.ViewModels.AddLocationViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.CartReviewViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.DeliveryPointsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryDetailsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.HomeViewModel
@@ -124,6 +128,18 @@ fun MyApp() {
             wirelessViewModel = { hiltViewModel<MyOffersViewModels>() }
         ) {
             MyOffersScreen()
+        }
+        MyScreen(
+            navController, Routes.deliveryPoints,
+            wirelessViewModel = { hiltViewModel<DeliveryPointsViewModel>() }
+        ) {
+            DeliveryPointsScreen()
+        }
+        MyScreen(
+            navController, Routes.addLocation,
+            wirelessViewModel = { hiltViewModel<AddLocationViewModel>() }
+        ) {
+            AddLocationScreen()
         }
     }
 }

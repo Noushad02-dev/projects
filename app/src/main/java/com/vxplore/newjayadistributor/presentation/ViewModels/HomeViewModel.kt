@@ -120,6 +120,11 @@ class HomeViewModel @Inject constructor(
                     navigate(Routes.orderReceive.full)
                 }
             }
+            MyDataIds.deliveryPoints -> {
+                navigation {
+                    navigate(Routes.deliveryPoints.full)
+                }
+            }
         }
     }
 

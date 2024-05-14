@@ -67,5 +67,20 @@ enum class MyDataIds {
     categoryChange,
     productList,
     categoryidClick,
-    brandChange
+    brandChange,
+    cartList,
+    previousState,
+    taxableState,
+    taxState,
+    discountState,
+    totalState,
+    delete,
+    deliveryPoints,
+    locationList,
+    addLocationClick,
+    addLocationList,
+    locationSearch,
+    addLocation,
+    location,
+    selectLocationId
 }

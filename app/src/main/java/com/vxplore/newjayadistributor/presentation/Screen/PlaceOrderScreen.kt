@@ -56,6 +56,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -223,20 +224,23 @@ fun PlaceOrderScreen(
                                     contentDescription = "",
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier
-                                        .height(64.dep)
-                                        .width(72.dep)
+                                        .height(60.dep)
+                                        .width(64.dep)
                                 )
                                 Spacer(modifier = Modifier.width(8.dep))
                                 Column {
                                     Text(
-                                        text = it.name,
-                                        fontSize = 14.sep,
+                                        text = if (it.name.length > 13) "${it.name.take(13)}..." else it.name,
+                                        fontSize = 13.sep,
                                         color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold
+                                        fontWeight = FontWeight.ExtraBold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
+
                                     Text(
                                         text = it.code,
-                                        fontSize = 14.sep,
+                                        fontSize = 13.sep,
                                         color = Color.Black,
                                         //fontWeight = FontWeight.ExtraBold
                                     )
@@ -258,8 +262,8 @@ fun PlaceOrderScreen(
                                 Box(
                                     modifier = Modifier
                                         .border(1.dp, Color(0xFFD1D1D1), RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 20.dp)
-                                        .padding(vertical = 17.dp)
+                                        .padding(horizontal = 16.dp)
+                                        .padding(vertical = 14.dp)
                                         .clickable {
                                             val newText = if (text == "CB") {
                                                 viewModel.setSelectedText("Pcs", "unit_pcs")
@@ -273,7 +277,7 @@ fun PlaceOrderScreen(
                                 ) {
                                     Text(
                                         text = text/*it.unit.joinToString { unit -> unit.name }*/,
-                                        fontSize = 8.sep,
+                                        fontSize = 12.sep,
                                         color = Color.Black,
                                         modifier = Modifier
                                         //.padding(horizontal = 16.dp)
@@ -282,8 +286,9 @@ fun PlaceOrderScreen(
                                 Spacer(modifier = Modifier.width(12.dep))
                                 Box(
                                     modifier = Modifier
-                                        .height(44.dep)
-                                        .width(56.dep)
+                                        .border(1.dep, Color.LightGray)
+                                        .height(58.dep)
+                                        .width(64.dep)
                                 ) {
                                     ProductList(
                                         it,
@@ -303,42 +308,36 @@ fun PlaceOrderScreen(
                     }
                 }
             }
-
-            Box(
-                contentAlignment = Alignment.BottomCenter,
+        }
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                /*.padding(horizontal = 24.dep)
+                .padding(bottom = 60.dep)*/
+                .fillMaxSize()
+        ) {
+            Button(
+                onClick = {
+                    notifier.notify(MyDataIds.viewCart,it)
+                },
                 modifier = Modifier
-                    /*.padding(horizontal = 24.dep)
-                    .padding(bottom = 60.dep)*/
-                    .fillMaxSize()
+                    .height(50.dep)
+                    .fillMaxWidth()
+                //.weight(.7f)
+                ,
+                colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dep,
+                    pressedElevation = 10.dep
+                ),
+                shape = RectangleShape
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = {
-                            notifier.notify(MyDataIds.viewCart)
-                        },
-                        modifier = Modifier
-                            .height(50.dep)
-                            .fillMaxWidth()
-                            //.weight(.7f)
-                        ,
-                        colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 8.dep,
-                            pressedElevation = 10.dep
-                        ),
-                        shape = RectangleShape
-                    ) {
 
-                        Text(
-                            "View Cart",
-                            fontSize = 16.sep,
-                            color = Color.White
-                        )
-                    }
-                }
+                Text(
+                    "View Cart",
+                    fontSize = 16.sep,
+                    color = Color.White
+                )
             }
         }
     }
@@ -379,7 +378,6 @@ fun SearchField(
 }
 
 
-
 @Composable
 fun ProductList(
     it: Datum,
@@ -396,49 +394,34 @@ fun ProductList(
         qtyState.value = if (quantity > 0) quantity.toString() else null
     }
 
-    LaunchedEffect(key1 = product.product_id) {
-        val savedQuantity = App.cart.getQuantity(product.product_id)
-        if (savedQuantity != null) {
-            quantity = savedQuantity
-            onQuantityChange(quantity)
-            qtyState.value = quantity.toString()
-        }
-    }
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-                TextField(
-                    value = qtyState.value ?: "",
-                    onValueChange = {
-                        qtyState.value = it
-                        if (it.isNotEmpty()) {
-                            product.unit.forEach { unit ->
-                                App.cart.add(product.product_id, it.toInt(), unit.id)
-                            }
-
-                        } else {
-                            // App.cart.remove(product.uid) // Remove if input is empty
-                        }
-                        // notifier.notify(MyDataIds.qty, it)
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 28.dep)
-                        .padding(top = 8.dep)
-                        .fillMaxWidth(),
-                    placeholder = {
-                        Text(
-                            text = "qty",
-                            fontSize = 12.sep,
-                            color = Color(0xFF818181)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    textStyle = TextStyle(fontSize = 16.sep),
-                    singleLine = true
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextField(
+            value = qtyState.value ?: "",
+            onValueChange = {
+                qtyState.value = it
+                if (it.isNotEmpty()) {
+                    product.unit.forEach { unit ->
+                        App.cart.add(product.product_id, it.toInt(), unit.id)
+                    }
+                } else {
+                    // App.cart.remove(product.uid) // Remove if input is empty
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+            placeholder = {
+                Text(
+                    text = "qty",
+                    fontSize = 12.sep,
+                    color = Color.Black
                 )
-
-        }
-    Spacer(modifier = Modifier.height(10.dep))
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            textStyle = TextStyle(fontSize = 16.sep, color = Color.Black),
+            singleLine = true
+        )
+    }
+    Spacer(modifier = Modifier.height(10.dp))
 }
