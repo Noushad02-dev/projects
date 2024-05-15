@@ -4,13 +4,18 @@ import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
 import com.vxplore.newjayadistributor.model.DashBoardDataResponse
+import com.vxplore.newjayadistributor.model.DueOrderDataResponse
 import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
 import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
+import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
+import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
+import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
 import com.vxplore.newjayadistributor.model.ShowCartDataResponse
+import com.vxplore.newjayadistributor.model.TrackOrderDataResponse
 import com.vxplore.newjayadistributor.model.ViewCartDataResponse
 
 interface Repository {
@@ -34,6 +39,8 @@ interface Repository {
     fun getCartId() : String?
     fun setLocationId(locationId: String?)
     fun getLocationId() : String?
+    fun setOrderReceivedId(orderReceivedId: String?)
+    fun getOrderReceivedId() : String?
 
 
     suspend fun login(email : String, password : String) : LoginDataResponse?
@@ -59,4 +66,34 @@ interface Repository {
     suspend fun searchLocation(user_id: String, search_text: String, password: String) : LocationDataResponse?
     suspend fun saveLocation(user_id: String, location_id: String, password: String) : ResetDataResponse?
     suspend fun placeOrder(user_id: String, location_id: String, password: String) : ResetDataResponse?
+    suspend fun orderReceive(
+        userId: String,
+        password: String,
+    ): OrderReceiveDataResponse?
+    suspend fun dueDelivery(
+        userId: String,
+        password: String,
+    ): DueOrderDataResponse?
+    suspend fun orderDetails(
+        userId: String,
+        order_id: String,
+        password: String,
+    ): OrderDetailsDataResponse?
+    suspend fun confirmDispatch(
+        password: String,
+        order_id: String,
+    ): ResetDataResponse?
+    suspend fun confirmOrder(
+        password: String,
+        order_id: String,
+    ): ResetDataResponse?
+    suspend fun trackOrder(
+        userId: String,
+        password: String,
+    ): TrackOrderDataResponse?
+    suspend fun orderStatus(
+        userId: String,
+        order_id: String,
+        password: String,
+    ): OrderStatusDataResponse?
 }

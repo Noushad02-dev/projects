@@ -19,4 +19,6 @@ object Routes {
     val myOffers = Route("myOffers")
     val deliveryPoints = Route("deliveryPoints")
     val addLocation = Route("addLocation")
+    val orderHistory = Route("orderHistory")
+    val orderDetailsHistory = Route("orderDetailsHistory")
 }

@@ -311,6 +311,21 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            notifier.notify(MyDataIds.history)
+                        }
+                        .padding(12.dep)
+                ) {
+                    Text(
+                        text = "Order History",
+                        fontSize = 16.sep,
+                        color = Color(0xFF1D1A1A)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
                             notifier.notify(MyDataIds.logout)
                         }
                         .padding(12.dep)

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -85,6 +86,8 @@ import com.debduttapanda.j3lib.sep
 import com.debduttapanda.j3lib.stringState
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.R
+import com.vxplore.newjayadistributor.model.CartProduct
+import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryDetailsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,6 +97,17 @@ fun DueDeliveryDetailsScreen(
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     profilename: State<String> = stringState(key = MyDataIds.profilename),
     dialog: Boolean = boolState(key = MyDataIds.openDialog).value,
+    orderDetails: SnapshotStateList<OrderDetailsDatum> = listState(key = MyDataIds.ordersDetails),
+    taxableState: State<String> = stringState(key = MyDataIds.taxableState),
+    taxState: State<String> = stringState(key = MyDataIds.taxState),
+    discountState: State<String> = stringState(key = MyDataIds.discountState),
+    totalState: State<String> = stringState(key = MyDataIds.totalState),
+    storeNameState: State<String> = stringState(key = MyDataIds.storeNameState),
+    orderIdState: State<String> = stringState(key = MyDataIds.orderIdState),
+    routeState: State<String> = stringState(key = MyDataIds.routeState),
+    orderAmountState: State<String> = stringState(key = MyDataIds.orderAmountState),
+    countState: State<String> = stringState(key = MyDataIds.countState),
+    dateState: State<String> = stringState(key = MyDataIds.dateState),
 ) {
     if (dialog == true) {
         Dialogue_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
@@ -152,6 +166,18 @@ fun DueDeliveryDetailsScreen(
         }
     )
     {
+        if (loadingState.value) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                CircularProgressIndicator(
+                    color = Color(0XFFFF4155),
+                )
+            }
+        } else {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -171,7 +197,7 @@ fun DueDeliveryDetailsScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Bikrimart",
+                        text = storeNameState.value,
                         fontSize = 16.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.SemiBold
@@ -191,13 +217,13 @@ fun DueDeliveryDetailsScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Bally to Belur",
+                        text = routeState.value,
                         fontSize = 12.sep,
                         color = Color(0xFF8E8E8E),
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "06909919",
+                        text = orderIdState.value,
                         fontSize = 14.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.ExtraBold
@@ -215,21 +241,21 @@ fun DueDeliveryDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "₹ 15404",
+                            text = "₹ ${orderAmountState.value}",
                             fontSize = 16.sep,
                             color = Color(0xFF575151),
                             fontWeight = FontWeight.ExtraBold
                         )
                         Spacer(modifier = Modifier.width(8.dep))
                         Text(
-                            text = "5 Items",
+                            text = "${countState.value} Items",
                             fontSize = 12.sep,
                             color = Color(0xFF8E8E8E),
                             fontWeight = FontWeight.SemiBold
                         )
                     }
                     Text(
-                        text = "May 8, 2024",
+                        text = dateState.value,
                         fontSize = 12.sep,
                         color = Color(0xFF8E8E8E),
                         fontWeight = FontWeight.SemiBold
@@ -238,6 +264,7 @@ fun DueDeliveryDetailsScreen(
             }
             Spacer(modifier = Modifier.height(6.dep))
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .padding(horizontal = 20.dep)
@@ -291,91 +318,96 @@ fun DueDeliveryDetailsScreen(
             }
             Spacer(modifier = Modifier.height(6.dep))
             Divider(
-                thickness = .5.dep,
+                thickness = .8.dep,
                 color = Color(0xFFEBEBEB)
             )
             Spacer(modifier = Modifier.height(6.dep))
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 250.dep),
-                contentPadding = PaddingValues(bottom = 10.dep),
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(bottom = 208.dep),
                 verticalArrangement = Arrangement.spacedBy(6.dep)
             ) {
-                items(count = 40) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .padding(horizontal = 20.dep)
-                            .fillMaxWidth()
-                    ) {
-                        Column(
-                        ) {
-                            Text(
-                                text = "Butter D-Lite",
-                                fontSize = 12.sep,
-                                color = Color.Black,
-                                fontWeight = FontWeight.ExtraBold
-                            )
-                            Spacer(modifier = Modifier.height(4.dep))
-                            Text(
-                                text = "10016 - 300gm",
-                                fontSize = 12.sep,
-                                color = Color.Black,
-                                //fontWeight = FontWeight.ExtraBold
-                            )
-                        }
-                        Text(
-                            text = "₹ 32 X 10",
-                            fontSize = 12.sep,
-                            color = Color.Black,
-                            //fontWeight = FontWeight.ExtraBold
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "₹ 320",
-                                fontSize = 14.sep,
-                                color = Color.Black,
-                                fontWeight = FontWeight.ExtraBold
-                            )
-                            IconButton(
-                                onClick = {
-                                    showBottomSheetState = true
-                                }
+                itemsIndexed(orderDetails) { index, it ->
+                    orderDetails.forEach { orderDetail ->
+                        orderDetail.ordered_products.forEach { orderedProduct ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dep)
+                                    .fillMaxWidth()
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Edit",
-                                    tint = Color(0xFFD0D0D0),
-                                    modifier = Modifier
-                                        .height(32.dep)
-                                        .width(20.dep)
+
+                                Column(
+                                ) {
+                                    Text(
+                                        text = if (orderedProduct.product.name.length > 13) "${orderedProduct.product.name.take(13)}..." else orderedProduct.product.name,
+                                        fontSize = 12.sep,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dep))
+                                    Text(
+                                        text = "${orderedProduct.product.code} - ${orderedProduct.product.weight_string}",
+                                        fontSize = 12.sep,
+                                        color = Color.Black,
+                                        //fontWeight = FontWeight.ExtraBold
+                                    )
+                                }
+                                Text(
+                                    text = "₹ ${orderedProduct.price_string} X ${orderedProduct.quantity}",
+                                    fontSize = 12.sep,
+                                    color = Color.Black,
+                                    //fontWeight = FontWeight.ExtraBold
                                 )
-                            }
-                            IconButton(
-                                onClick = {
-                                    /* notifier.notify(
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "₹ ${orderedProduct.sub_total_amount_string}",
+                                        fontSize = 14.sep,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                    IconButton(
+                                        onClick = {
+                                            showBottomSheetState = true
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Edit",
+                                            tint = Color(0xFFD0D0D0),
+                                            modifier = Modifier
+                                                .height(32.dep)
+                                                .width(20.dep)
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            /* notifier.notify(
                                          MyDataIds.back
                                      )*/
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.DeleteOutline,
+                                            contentDescription = "DeleteOutline",
+                                            tint = Color(0xFFD62B2B)
+                                        )
+                                    }
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.DeleteOutline,
-                                    contentDescription = "DeleteOutline",
-                                    tint = Color(0xFFD62B2B)
-                                )
                             }
+                            Spacer(modifier = Modifier.height(6.dep))
+                            Divider(
+                                thickness = .8.dep,
+                                color = Color(0xFFEBEBEB)
+                            )
+                            Spacer(modifier = Modifier.height(6.dep))
                         }
                     }
-                    Spacer(modifier = Modifier.height(6.dep))
-                    Divider(
-                        thickness = .5.dep,
-                        color = Color(0xFFEBEBEB)
-                    )
                 }
             }
         }
@@ -392,7 +424,7 @@ fun DueDeliveryDetailsScreen(
             ) {
                 Button(
                     onClick = {
-                        //notifier.notify(MyDataIds.orderConfirm,)
+                        notifier.notify(MyDataIds.confirmDispatch)
                     },
                     modifier = Modifier
                         .height(50.dep)
@@ -475,7 +507,7 @@ fun DueDeliveryDetailsScreen(
                         //fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "₹ 1600",
+                        text = "₹ ${taxableState.value}",
                         fontSize = 14.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.ExtraBold
@@ -495,7 +527,7 @@ fun DueDeliveryDetailsScreen(
                         //fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "₹ 245",
+                        text = "₹ ${taxState.value}",
                         fontSize = 14.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.ExtraBold
@@ -515,7 +547,7 @@ fun DueDeliveryDetailsScreen(
                         //fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "₹ 0",
+                        text = "₹ ${discountState.value}",
                         fontSize = 14.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.ExtraBold
@@ -535,7 +567,7 @@ fun DueDeliveryDetailsScreen(
                         //fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "₹ 1845",
+                        text = "₹ ${totalState.value}",
                         fontSize = 14.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.ExtraBold
@@ -544,6 +576,7 @@ fun DueDeliveryDetailsScreen(
             }
         }
     }
+}
     if (showBottomSheetState) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -574,6 +607,7 @@ fun NameBottomSheetContent(
     notifier: NotificationService = rememberNotifier(),
     profilename: State<String> = stringState(key = MyDataIds.profilename),
     bottomSheetVisible: MutableState<Boolean> = remember { mutableStateOf(true) },
+    qtyState: State<String> = stringState(key = MyDataIds.qtyState),
     //qty: State<String> = stringState(key = MyDataIds.qtyState),
 ) {
     var visible by remember { mutableStateOf(true) }
@@ -632,7 +666,7 @@ fun NameBottomSheetContent(
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Change the price",
+            text = "Change the quantity",
             fontSize = 12.sp,
             color = Color(0xFF2C323A),
             modifier = Modifier
@@ -664,7 +698,7 @@ fun NameBottomSheetContent(
             ),
             placeholder = {
                 Text(
-                    "Enter Price",
+                    qtyState.value,
                     color = Color(0xFF959595),
                     fontSize = 12.sp
                 )

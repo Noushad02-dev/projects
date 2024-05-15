@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,8 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -65,13 +68,13 @@ fun AddLocationScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     addLocationList: SnapshotStateList<LocData> = listState(key = MyDataIds.addLocationList),
-){
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Delivery Points",
+                        text = "Add Location",
                         fontSize = 20.sep,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -132,23 +135,48 @@ fun AddLocationScreen(
                     contentPadding = PaddingValues(vertical = 10.dep),
                     verticalArrangement = Arrangement.spacedBy(20.dep)
                 ) {
-                    items(addLocationList) {
+                    itemsIndexed(addLocationList) { index, it ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.location),
-                                contentDescription = "Location"
-                            )
-                            Spacer(modifier = Modifier.width(16.dep))
-                            Text(
-                                text = "${it.name} - ${it.state} - ${it.pincode}",
-                                fontSize = 16.sep,
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.location),
+                                    contentDescription = "Location"
+                                )
+                                Spacer(modifier = Modifier.width(16.dep))
+                                Text(
+                                    text = "${it.name} - ${it.state} - ${it.pincode}",
+                                    fontSize = 16.sep,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                            RadioButton(
+                                selected = it.selected,
+                                onClick = {
+                                    val updatedList = addLocationList.mapIndexed { index, listItem ->
+                                        listItem.copy(
+                                            selected = (index == addLocationList.indexOf(
+                                                it
+                                            ))
+                                        )
+                                    }
+                                    addLocationList.clear()
+                                    addLocationList.addAll(updatedList)
+                                    notifier.notify(MyDataIds.routeId, index)
+                                },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = Color(0XFFD62B2B),
+                                    unselectedColor = Color(0xFF707070)
+                                ),
+                                modifier = Modifier
+                                    .size(24.dep)
                             )
                         }
                         Spacer(modifier = Modifier.height(12.dep))
@@ -212,7 +240,10 @@ fun LocationSearchField(
                 fontSize = 16.sep
             )
         },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Done
+        ),
         singleLine = true,
         maxLines = 1,
         trailingIcon = {

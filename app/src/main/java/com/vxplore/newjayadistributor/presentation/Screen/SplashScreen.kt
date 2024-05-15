@@ -75,23 +75,6 @@ fun SplashScreen(
                 color = Color(0xFF222222)
             )
         }
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .padding(bottom = 30.dep)
-                .fillMaxSize()
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-            }
-            Spacer(modifier = Modifier.height(200.dep))
-            Text(
-                text = "Version : ${versionName.value}",
-                fontSize = 14.sep,
-                color = Color.Black,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+
     }
 }

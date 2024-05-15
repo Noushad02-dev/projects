@@ -28,6 +28,7 @@ class AddLocationViewModel @Inject constructor(
     private val loadingState = mutableStateOf(false)
     private val locationSearch = mutableStateOf("")
     private val locationId = mutableStateOf("")
+    private val indexRouteId = mutableStateOf(0)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -51,6 +52,12 @@ class AddLocationViewModel @Inject constructor(
 
             MyDataIds.addLocation -> {
                 addLocation()
+            }
+            MyDataIds.routeId->{
+                indexRouteId.value = arg as Int
+                val lId = addLocationList[indexRouteId.value].location_id
+                repo.setLocationId(lId)
+                Log.d("cdhubgc",lId)
             }
         }
     }
@@ -77,10 +84,10 @@ class AddLocationViewModel @Inject constructor(
                     repo.searchLocation(userId.value, locationSearch.value, password.value)
                 if (response?.status == true) {
                     addLocationList.clear()
-                    addLocationList.addAll(listOf(response.data))
-                    val locationIds = response.data.location_id
+                    addLocationList.addAll(response.data)
+                   /* val locationIds = response.data.location_id
                     repo.setLocationId(locationIds)
-                    Log.d("kjicdn", locationIds)
+                    Log.d("kjicdn", locationIds)*/
                 }
             } catch (e: Exception) {
                 //todo

@@ -14,7 +14,9 @@ import com.vxplore.newjayadistributor.presentation.Screen.HomeScreen
 import com.vxplore.newjayadistributor.presentation.Screen.LoginPage
 import com.vxplore.newjayadistributor.presentation.Screen.MyOffersScreen
 import com.vxplore.newjayadistributor.presentation.Screen.MyStockScreen
+import com.vxplore.newjayadistributor.presentation.Screen.OrderDetailsHistoryScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderDetailsScreen
+import com.vxplore.newjayadistributor.presentation.Screen.OrderHistoryScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderReceiveScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderStatusScreen
 import com.vxplore.newjayadistributor.presentation.Screen.PlaceOrderScreen
@@ -30,7 +32,9 @@ import com.vxplore.newjayadistributor.presentation.ViewModels.HomeViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.LoginViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.MyOffersViewModels
 import com.vxplore.newjayadistributor.presentation.ViewModels.MyStockViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.OrderDetailsHistoryViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderDetailsViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.OrderHistoryViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderReceiveViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderStatusViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.PlaceOrderViewModel
@@ -140,6 +144,18 @@ fun MyApp() {
             wirelessViewModel = { hiltViewModel<AddLocationViewModel>() }
         ) {
             AddLocationScreen()
+        }
+        MyScreen(
+            navController, Routes.orderHistory,
+            wirelessViewModel = { hiltViewModel<OrderHistoryViewModel>() }
+        ) {
+            OrderHistoryScreen()
+        }
+        MyScreen(
+            navController, Routes.orderDetailsHistory,
+            wirelessViewModel = { hiltViewModel<OrderDetailsHistoryViewModel>() }
+        ) {
+            OrderDetailsHistoryScreen()
         }
     }
 }

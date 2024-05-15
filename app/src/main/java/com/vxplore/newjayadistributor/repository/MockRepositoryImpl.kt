@@ -5,13 +5,18 @@ import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
 import com.vxplore.newjayadistributor.model.DashBoardDataResponse
+import com.vxplore.newjayadistributor.model.DueOrderDataResponse
 import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
 import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
+import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
+import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
+import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
 import com.vxplore.newjayadistributor.model.ShowCartDataResponse
+import com.vxplore.newjayadistributor.model.TrackOrderDataResponse
 import com.vxplore.newjayadistributor.model.ViewCartDataResponse
 import com.vxplore.newjayadistributor.repository.preference.PrefRepository
 import javax.inject.Inject
@@ -84,6 +89,14 @@ class MockRepositoryImpl @Inject constructor(
 
     override fun getLocationId(): String? {
        return myPref.getLocationId()
+    }
+
+    override fun setOrderReceivedId(orderReceivedId: String?) {
+        myPref.setOrderReceivedId(orderReceivedId)
+    }
+
+    override fun getOrderReceivedId(): String? {
+        return myPref.getOrderReceivedId()
     }
 
     override suspend fun login(email: String, password: String): LoginDataResponse? {
@@ -222,6 +235,77 @@ class MockRepositoryImpl @Inject constructor(
         password: String
     ): ResetDataResponse? {
         val response = apiHelper.placeOrder(user_id, location_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun orderReceive(userId: String, password: String): OrderReceiveDataResponse? {
+        val response = apiHelper.orderReceive(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun dueDelivery(userId: String, password: String): DueOrderDataResponse? {
+        val response = apiHelper.dueDelivery(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun orderDetails(
+        userId: String,
+        order_id: String,
+        password: String
+    ): OrderDetailsDataResponse? {
+        val response= apiHelper.orderDetails(userId,order_id,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun confirmDispatch(password: String, order_id: String): ResetDataResponse? {
+        val response = apiHelper.confirmDispatch(password, order_id)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun confirmOrder(password: String, order_id: String): ResetDataResponse? {
+        val response = apiHelper.confirmOrder(password, order_id)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun trackOrder(userId: String, password: String): TrackOrderDataResponse? {
+        val response = apiHelper.trackOrder(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun orderStatus(
+        userId: String,
+        order_id: String,
+        password: String
+    ): OrderStatusDataResponse? {
+        val response = apiHelper.orderStatus(userId,order_id,password)
         return if (response.isSuccessful){
             response.body()
         }else{

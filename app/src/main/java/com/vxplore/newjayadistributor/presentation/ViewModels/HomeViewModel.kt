@@ -125,6 +125,11 @@ class HomeViewModel @Inject constructor(
                     navigate(Routes.deliveryPoints.full)
                 }
             }
+            MyDataIds.history -> {
+                navigation {
+                    navigate(Routes.orderHistory.full)
+                }
+            }
         }
     }
 

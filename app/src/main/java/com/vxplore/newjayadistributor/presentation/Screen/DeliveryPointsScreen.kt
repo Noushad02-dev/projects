@@ -134,7 +134,7 @@ fun DeliveryPointsScreen(
                     items(locationList) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
+                            //horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .padding(horizontal = 12.dep)
                                 .fillMaxWidth()

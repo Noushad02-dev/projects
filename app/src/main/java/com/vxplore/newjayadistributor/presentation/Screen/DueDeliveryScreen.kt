@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,15 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import com.debduttapanda.j3lib.NotificationService
 import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
+import com.debduttapanda.j3lib.listState
 import com.debduttapanda.j3lib.rememberNotifier
 import com.debduttapanda.j3lib.sep
 import com.vxplore.newjayadistributor.MyDataIds
+import com.vxplore.newjayadistributor.model.DueDatum
+import com.vxplore.newjayadistributor.model.OrderReceiveDatum
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DueDeliveryScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
+    dueDelivery: SnapshotStateList<DueDatum> = listState(key = MyDataIds.dueDelivery),
  ){
     Scaffold(
         topBar = {
@@ -105,7 +111,7 @@ fun DueDeliveryScreen(
                     contentPadding = PaddingValues(vertical = 10.dep),
                     verticalArrangement = Arrangement.spacedBy(20.dep)
                 ) {
-                    items(count = 4){
+                    itemsIndexed(dueDelivery){index,it->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -117,7 +123,7 @@ fun DueDeliveryScreen(
                                 )
                                 .clip(RoundedCornerShape(4.dep))
                                 .clickable {
-                                    notifier.notify(MyDataIds.dueDetails, it)
+                                    notifier.notify(MyDataIds.dueDetails, index)
                                 },
                             colors = CardDefaults.cardColors(Color.White),
                             elevation = CardDefaults.cardElevation(
@@ -139,7 +145,7 @@ fun DueDeliveryScreen(
                                         .fillMaxWidth()
                                 ){
                                     Text(
-                                        text = "Bikrimart",
+                                        text = it.store_name,
                                         fontSize = 16.sep,
                                         color = Color.Black,
                                         fontWeight = FontWeight.SemiBold
@@ -159,13 +165,13 @@ fun DueDeliveryScreen(
                                         .fillMaxWidth()
                                 ){
                                     Text(
-                                        text = "Bally to Belur",
+                                        text = it.route,
                                         fontSize = 12.sep,
                                         color = Color(0xFF8E8E8E),
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
-                                        text = "06909919",
+                                        text = it.order_id,
                                         fontSize = 14.sep,
                                         color = Color.Black,
                                         fontWeight = FontWeight.ExtraBold
@@ -183,21 +189,21 @@ fun DueDeliveryScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "₹ 15404",
+                                            text = "₹ ${it.order_amount_string}",
                                             fontSize = 16.sep,
                                             color = Color(0xFF575151),
                                             fontWeight = FontWeight.ExtraBold
                                         )
                                         Spacer(modifier = Modifier.width(8.dep))
                                         Text(
-                                            text = "5 Items",
+                                            text = "${it.count_order_item.toString()} Items",
                                             fontSize = 12.sep,
                                             color = Color(0xFF8E8E8E),
                                             fontWeight = FontWeight.SemiBold
                                         )
                                     }
                                     Text(
-                                        text = "May 8, 2024",
+                                        text = it.order_date,
                                         fontSize = 12.sep,
                                         color = Color(0xFF8E8E8E),
                                         fontWeight = FontWeight.SemiBold
