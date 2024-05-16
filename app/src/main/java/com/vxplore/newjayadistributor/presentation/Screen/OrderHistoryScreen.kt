@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,15 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import com.debduttapanda.j3lib.NotificationService
 import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
+import com.debduttapanda.j3lib.listState
 import com.debduttapanda.j3lib.rememberNotifier
 import com.debduttapanda.j3lib.sep
 import com.vxplore.newjayadistributor.MyDataIds
+import com.vxplore.newjayadistributor.model.DueDatum
+import com.vxplore.newjayadistributor.model.HistoryDatum
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderHistoryScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
+    orderHistoryList: SnapshotStateList<HistoryDatum> = listState(key = MyDataIds.orderHistoryList),
 ) {
     Scaffold(
         topBar = {
@@ -106,7 +111,7 @@ fun OrderHistoryScreen(
                     contentPadding = PaddingValues(vertical = 10.dep),
                     verticalArrangement = Arrangement.spacedBy(20.dep)
                 ) {
-                    items(count = 4){
+                    itemsIndexed(orderHistoryList){index,it->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -118,7 +123,7 @@ fun OrderHistoryScreen(
                                 )
                                 .clip(RoundedCornerShape(4.dep))
                                 .clickable {
-                                    notifier.notify(MyDataIds.historyDetails,)
+                                    notifier.notify(MyDataIds.historyDetails,index)
                                 },
                             colors = CardDefaults.cardColors(Color.White),
                             elevation = CardDefaults.cardElevation(
@@ -140,7 +145,7 @@ fun OrderHistoryScreen(
                                         .fillMaxWidth()
                                 ){
                                     Text(
-                                        text = "it.store_name",
+                                        text = it.store_name,
                                         fontSize = 16.sep,
                                         color = Color.Black,
                                         fontWeight = FontWeight.SemiBold
@@ -160,13 +165,13 @@ fun OrderHistoryScreen(
                                         .fillMaxWidth()
                                 ){
                                     Text(
-                                        text = "it.route",
+                                        text = it.route,
                                         fontSize = 12.sep,
                                         color = Color(0xFF8E8E8E),
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
-                                        text = "it.order_id",
+                                        text = it.order_id,
                                         fontSize = 14.sep,
                                         color = Color.Black,
                                         fontWeight = FontWeight.ExtraBold
@@ -184,21 +189,21 @@ fun OrderHistoryScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "₹ order_amount_string",
+                                            text = "₹ ${it.order_amount_string}",
                                             fontSize = 16.sep,
                                             color = Color(0xFF575151),
                                             fontWeight = FontWeight.ExtraBold
                                         )
                                         Spacer(modifier = Modifier.width(8.dep))
                                         Text(
-                                            text = "8 Items",
+                                            text = "${it.count_order_item} Items",
                                             fontSize = 12.sep,
                                             color = Color(0xFF8E8E8E),
                                             fontWeight = FontWeight.SemiBold
                                         )
                                     }
                                     Text(
-                                        text = "it.order_date",
+                                        text = it.order_date,
                                         fontSize = 12.sep,
                                         color = Color(0xFF8E8E8E),
                                         fontWeight = FontWeight.SemiBold

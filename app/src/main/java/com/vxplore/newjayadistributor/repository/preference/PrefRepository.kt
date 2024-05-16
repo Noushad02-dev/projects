@@ -26,4 +26,6 @@ interface PrefRepository {
     fun getLocationId() : String?
     fun setOrderReceivedId(orderReceivedId: String?)
     fun getOrderReceivedId() : String?
+    fun setProductId(productId: String?)
+    fun getProductId() : String?
 }

@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,15 +39,29 @@ import androidx.compose.ui.text.font.FontWeight
 import com.debduttapanda.j3lib.NotificationService
 import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
+import com.debduttapanda.j3lib.listState
 import com.debduttapanda.j3lib.rememberNotifier
 import com.debduttapanda.j3lib.sep
+import com.debduttapanda.j3lib.stringState
 import com.vxplore.newjayadistributor.MyDataIds
+import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderDetailsHistoryScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
+    orderDetails: SnapshotStateList<OrderDetailsDatum> = listState(key = MyDataIds.ordersDetails),
+    taxableState: State<String> = stringState(key = MyDataIds.taxableState),
+    taxState: State<String> = stringState(key = MyDataIds.taxState),
+    discountState: State<String> = stringState(key = MyDataIds.discountState),
+    totalState: State<String> = stringState(key = MyDataIds.totalState),
+    storeNameState: State<String> = stringState(key = MyDataIds.storeNameState),
+    orderIdState: State<String> = stringState(key = MyDataIds.orderIdState),
+    routeState: State<String> = stringState(key = MyDataIds.routeState),
+    orderAmountState: State<String> = stringState(key = MyDataIds.orderAmountState),
+    countState: State<String> = stringState(key = MyDataIds.countState),
+    dateState: State<String> = stringState(key = MyDataIds.dateState),
 ) {
     Scaffold(
         topBar = {
@@ -112,7 +127,7 @@ fun OrderDetailsHistoryScreen(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "abc",
+                            text = storeNameState.value,
                             fontSize = 16.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.SemiBold
@@ -132,13 +147,13 @@ fun OrderDetailsHistoryScreen(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "routeState.value",
+                            text = routeState.value,
                             fontSize = 12.sep,
                             color = Color(0xFF8E8E8E),
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "23434434",
+                            text = orderIdState.value,
                             fontSize = 14.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold
@@ -156,21 +171,21 @@ fun OrderDetailsHistoryScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "₹ 787}",
+                                text = "₹ ${orderAmountState.value}",
                                 fontSize = 16.sep,
                                 color = Color(0xFF575151),
                                 fontWeight = FontWeight.ExtraBold
                             )
                             Spacer(modifier = Modifier.width(8.dep))
                             Text(
-                                text = "{5} Items",
+                                text = "${countState.value} Items",
                                 fontSize = 12.sep,
                                 color = Color(0xFF8E8E8E),
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
                         Text(
-                            text = "12/78/90",
+                            text = dateState.value,
                             fontSize = 12.sep,
                             color = Color(0xFF8E8E8E),
                             fontWeight = FontWeight.SemiBold
@@ -210,49 +225,57 @@ fun OrderDetailsHistoryScreen(
                     contentPadding = PaddingValues(bottom = 10.dep),
                     verticalArrangement = Arrangement.spacedBy(6.dep)
                 ) {
-                    items(count = 5) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier
-                                .padding(horizontal = 20.dep)
-                                .fillMaxWidth()
-                        ) {
-                            Column(
-                            ) {
-                                Text(
-                                    text = "product.name",
-                                    fontSize = 14.sep,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.ExtraBold
+                    itemsIndexed(orderDetails) { index, it ->
+                        orderDetails.forEach { orderDetail ->
+                            orderDetail.ordered_products.forEach { orderedProduct ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dep)
+                                        .fillMaxWidth()
+                                ) {
+                                    Column(
+                                    ) {
+                                        Text(
+                                            text = if (orderedProduct.product.name.length > 13) "${
+                                                orderedProduct.product.name.take(
+                                                    13
+                                                )
+                                            }..." else orderedProduct.product.name,
+                                            fontSize = 14.sep,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dep))
+                                        Text(
+                                            text = "${orderedProduct.product.code} - ${orderedProduct.product.weight_string}",
+                                            fontSize = 14.sep,
+                                            color = Color.Black,
+                                            //fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
+                                    Text(
+                                        text = "₹ ${orderedProduct.price_string} X ${orderedProduct.quantity}",
+                                        fontSize = 14.sep,
+                                        color = Color.Black,
+                                        //fontWeight = FontWeight.ExtraBold
+                                    )
+                                    Text(
+                                        text = "₹ ${orderedProduct.sub_total_amount_string}",
+                                        fontSize = 16.sep,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dep))
+                                Divider(
+                                    thickness = .8.dep,
+                                    color = Color(0xFFEBEBEB)
                                 )
-                                Spacer(modifier = Modifier.height(4.dep))
-                                Text(
-                                    text = "{1111} - {5g}",
-                                    fontSize = 14.sep,
-                                    color = Color.Black,
-                                    //fontWeight = FontWeight.ExtraBold
-                                )
+                                Spacer(modifier = Modifier.height(6.dep))
                             }
-                            Text(
-                                text = "₹ 21 X 2",
-                                fontSize = 14.sep,
-                                color = Color.Black,
-                                //fontWeight = FontWeight.ExtraBold
-                            )
-                            Text(
-                                text = "₹ 2332",
-                                fontSize = 16.sep,
-                                color = Color.Black,
-                                fontWeight = FontWeight.ExtraBold
-                            )
                         }
-                        Spacer(modifier = Modifier.height(6.dep))
-                        Divider(
-                            thickness = .8.dep,
-                            color = Color(0xFFEBEBEB)
-                        )
-                        Spacer(modifier = Modifier.height(6.dep))
                     }
                 }
             }
@@ -260,9 +283,9 @@ fun OrderDetailsHistoryScreen(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     //.padding(horizontal = 24.dep)
-                //.padding(bottom = 50.dep)
+                    //.padding(bottom = 50.dep)
                     .fillMaxSize()
-            ){
+            ) {
 
                 // Spacer(modifier = Modifier.height(6.dep))
                 Column(
@@ -285,7 +308,7 @@ fun OrderDetailsHistoryScreen(
                             //fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "₹ {taxableState.value}",
+                            text = "₹ ${taxableState.value}",
                             fontSize = 14.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold
@@ -305,7 +328,7 @@ fun OrderDetailsHistoryScreen(
                             //fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "₹ {taxState.value}",
+                            text = "₹ ${taxState.value}",
                             fontSize = 14.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold
@@ -325,7 +348,7 @@ fun OrderDetailsHistoryScreen(
                             //fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "₹ {discountState.value}",
+                            text = "₹ ${discountState.value}",
                             fontSize = 14.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold
@@ -345,7 +368,7 @@ fun OrderDetailsHistoryScreen(
                             //fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "₹ {totalState.value}",
+                            text = "₹ ${totalState.value}",
                             fontSize = 14.sep,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold

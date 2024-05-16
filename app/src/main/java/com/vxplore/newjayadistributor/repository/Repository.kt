@@ -1,5 +1,6 @@
 package com.vxplore.newjayadistributor.repository
 
+import com.vxplore.newjayadistributor.model.AddProductListDataResponse
 import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
@@ -9,7 +10,10 @@ import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
 import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
+import com.vxplore.newjayadistributor.model.MyStockAllProducts
+import com.vxplore.newjayadistributor.model.MyStockListDataResponse
 import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
+import com.vxplore.newjayadistributor.model.OrderHistoryDataResponse
 import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
 import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
@@ -41,6 +45,8 @@ interface Repository {
     fun getLocationId() : String?
     fun setOrderReceivedId(orderReceivedId: String?)
     fun getOrderReceivedId() : String?
+    fun setProductId(productId: String?)
+    fun getProductId() : String?
 
 
     suspend fun login(email : String, password : String) : LoginDataResponse?
@@ -96,4 +102,54 @@ interface Repository {
         order_id: String,
         password: String,
     ): OrderStatusDataResponse?
+
+    suspend fun removeOrderProduct(
+        userId: String,
+        order_id: String,
+        product_id: String,
+        password: String,
+    ): ResetDataResponse?
+    suspend fun updateProduct(
+        userId: String,
+        order_id: String,
+        product_id: String,
+        password: String,
+        quantity: String,
+    ): ResetDataResponse?
+    suspend fun addProductList(
+        userId: String,
+        order_id: String,
+        password: String,
+        search_text: String,
+    ): AddProductListDataResponse?
+
+    suspend fun addProduct(
+        userId: String,
+        order_id: String,
+        password: String,
+        product_id: String,
+        unit: String,
+        quantity: String,
+        price_per_unit_string: String,
+    ): ResetDataResponse?
+    suspend fun orderHistory(
+        userId: String,
+        password: String,
+    ): OrderHistoryDataResponse?
+    suspend fun myStockList(
+        userId: String,
+        order_id: String,
+        password: String,
+    ): MyStockListDataResponse?
+    suspend fun updateProduct(
+        userId: String,
+        password: String,
+        products: List<MyStockAllProducts>
+    ): ViewCartDataResponse?
+
+    suspend fun pdf(
+        userId: String,
+        order_id: String,
+        password: String,
+    ): ViewCartDataResponse?
 }

@@ -16,6 +16,7 @@ class PrefRepositoryImpl @Inject constructor(
     private val CartId = "CartId"
     private val LocationId = "LocationId"
     private val OrderReceivedId = "OrderReceivedId"
+    private val ProductId = "ProductId"
     private val myPref: SharedPreferences = context.getSharedPreferences("myPref", Context.MODE_PRIVATE)
 
 
@@ -92,5 +93,13 @@ class PrefRepositoryImpl @Inject constructor(
 
     override fun getOrderReceivedId(): String? {
         return myPref.getString(OrderReceivedId,"")
+    }
+
+    override fun setProductId(productId: String?) {
+        myPref.edit().putString(ProductId,productId.toString()).apply()
+    }
+
+    override fun getProductId(): String? {
+        return myPref.getString(ProductId,"")
     }
 }

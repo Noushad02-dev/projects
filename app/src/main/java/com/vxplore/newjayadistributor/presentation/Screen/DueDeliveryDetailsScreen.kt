@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -86,7 +87,9 @@ import com.debduttapanda.j3lib.sep
 import com.debduttapanda.j3lib.stringState
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.R
+import com.vxplore.newjayadistributor.model.AddProductListData
 import com.vxplore.newjayadistributor.model.CartProduct
+import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryDetailsViewModel
 
@@ -178,405 +181,418 @@ fun DueDeliveryDetailsScreen(
                 )
             }
         } else {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize()
-        ) {
             Column(
                 modifier = Modifier
-                    .background(Color(0xFFF8F8F8))
-                    .padding(top = 8.dep, bottom = 16.dep),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .padding(it)
+                    .fillMaxSize()
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                Column(
                     modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = storeNameState.value,
-                        fontSize = 16.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "Order # :",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = routeState.value,
-                        fontSize = 12.sep,
-                        color = Color(0xFF8E8E8E),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = orderIdState.value,
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dep))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
+                        .background(Color(0xFFF8F8F8))
+                        .padding(top = 8.dep, bottom = 16.dep),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
                     ) {
                         Text(
-                            text = "₹ ${orderAmountState.value}",
+                            text = storeNameState.value,
                             fontSize = 16.sep,
-                            color = Color(0xFF575151),
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "Order # :",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = routeState.value,
+                            fontSize = 12.sep,
+                            color = Color(0xFF8E8E8E),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = orderIdState.value,
+                            fontSize = 14.sep,
+                            color = Color.Black,
                             fontWeight = FontWeight.ExtraBold
                         )
-                        Spacer(modifier = Modifier.width(8.dep))
+                    }
+                    Spacer(modifier = Modifier.height(20.dep))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "₹ ${orderAmountState.value}",
+                                fontSize = 16.sep,
+                                color = Color(0xFF575151),
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Spacer(modifier = Modifier.width(8.dep))
+                            Text(
+                                text = "${countState.value} Items",
+                                fontSize = 12.sep,
+                                color = Color(0xFF8E8E8E),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                         Text(
-                            text = "${countState.value} Items",
+                            text = dateState.value,
                             fontSize = 12.sep,
                             color = Color(0xFF8E8E8E),
                             fontWeight = FontWeight.SemiBold
                         )
                     }
-                    Text(
-                        text = dateState.value,
-                        fontSize = 12.sep,
-                        color = Color(0xFF8E8E8E),
-                        fontWeight = FontWeight.SemiBold
-                    )
                 }
-            }
-            Spacer(modifier = Modifier.height(6.dep))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 20.dep)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Item(s)",
-                    fontSize = 14.sep,
-                    color = Color.Black,
-                    //fontWeight = FontWeight.SemiBold
-                )
+                Spacer(modifier = Modifier.height(6.dep))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dep)
+                        .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Price",
+                        text = "Item(s)",
                         fontSize = 14.sep,
                         color = Color.Black,
                         //fontWeight = FontWeight.SemiBold
                     )
-                    IconButton(
-                        onClick = {
-                            /*notifier.notify(
-                                MyDataIds.back
-                            )*/
-                        },
-                        enabled = false
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = Color.White,
+                        Text(
+                            text = "Price",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            //fontWeight = FontWeight.SemiBold
                         )
-                    }
-                    IconButton(
-                        onClick = {
-                            /*notifier.notify(
-                                MyDataIds.back
-                            )*/
-                        },
-                        enabled = false
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = Color.White,
-                        )
+                        IconButton(
+                            onClick = {
+                                /*notifier.notify(
+                                    MyDataIds.back
+                                )*/
+                            },
+                            enabled = false
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = Color.White,
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                /*notifier.notify(
+                                    MyDataIds.back
+                                )*/
+                            },
+                            enabled = false
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = Color.White,
+                            )
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(6.dep))
-            Divider(
-                thickness = .8.dep,
-                color = Color(0xFFEBEBEB)
-            )
-            Spacer(modifier = Modifier.height(6.dep))
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 208.dep),
-                verticalArrangement = Arrangement.spacedBy(6.dep)
-            ) {
-                itemsIndexed(orderDetails) { index, it ->
-                    orderDetails.forEach { orderDetail ->
-                        orderDetail.ordered_products.forEach { orderedProduct ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dep)
-                                    .fillMaxWidth()
-                            ) {
-
-                                Column(
+                Spacer(modifier = Modifier.height(6.dep))
+                Divider(
+                    thickness = .8.dep,
+                    color = Color(0xFFEBEBEB)
+                )
+                Spacer(modifier = Modifier.height(6.dep))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 208.dep),
+                    verticalArrangement = Arrangement.spacedBy(6.dep)
+                ) {
+                    itemsIndexed(orderDetails) { index, it ->
+                        orderDetails.forEach { orderDetail ->
+                            orderDetail.ordered_products.forEach { orderedProduct ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dep)
+                                        .fillMaxWidth()
                                 ) {
+
+                                    Column(
+                                    ) {
+                                        Text(
+                                            text = if (orderedProduct.product.name.length > 13) "${
+                                                orderedProduct.product.name.take(
+                                                    13
+                                                )
+                                            }..." else orderedProduct.product.name,
+                                            fontSize = 12.sep,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dep))
+                                        Text(
+                                            text = "${orderedProduct.product.code} - ${orderedProduct.product.weight_string}",
+                                            fontSize = 12.sep,
+                                            color = Color.Black,
+                                            //fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
                                     Text(
-                                        text = if (orderedProduct.product.name.length > 13) "${orderedProduct.product.name.take(13)}..." else orderedProduct.product.name,
-                                        fontSize = 12.sep,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dep))
-                                    Text(
-                                        text = "${orderedProduct.product.code} - ${orderedProduct.product.weight_string}",
+                                        text = "₹ ${orderedProduct.price_string} X ${orderedProduct.quantity}",
                                         fontSize = 12.sep,
                                         color = Color.Black,
                                         //fontWeight = FontWeight.ExtraBold
                                     )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "₹ ${orderedProduct.sub_total_amount_string}",
+                                            fontSize = 14.sep,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                        IconButton(
+                                            onClick = {
+                                                showBottomSheetState = true
+                                                notifier.notify(
+                                                    MyDataIds.update,
+                                                    Triple(
+                                                        index,
+                                                        orderedProduct.product_id,
+                                                        orderedProduct.product.name
+                                                    )
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Edit,
+                                                contentDescription = "Edit",
+                                                tint = Color(0xFFD0D0D0),
+                                                modifier = Modifier
+                                                    .height(32.dep)
+                                                    .width(20.dep)
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = {
+                                                notifier.notify(
+                                                    MyDataIds.remove,
+                                                    Pair(index, orderedProduct.product_id)
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.DeleteOutline,
+                                                contentDescription = "DeleteOutline",
+                                                tint = Color(0xFFD62B2B)
+                                            )
+                                        }
+                                    }
                                 }
-                                Text(
-                                    text = "₹ ${orderedProduct.price_string} X ${orderedProduct.quantity}",
-                                    fontSize = 12.sep,
-                                    color = Color.Black,
-                                    //fontWeight = FontWeight.ExtraBold
+                                Spacer(modifier = Modifier.height(6.dep))
+                                Divider(
+                                    thickness = .8.dep,
+                                    color = Color(0xFFEBEBEB)
                                 )
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "₹ ${orderedProduct.sub_total_amount_string}",
-                                        fontSize = 14.sep,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold
-                                    )
-                                    IconButton(
-                                        onClick = {
-                                            showBottomSheetState = true
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Edit,
-                                            contentDescription = "Edit",
-                                            tint = Color(0xFFD0D0D0),
-                                            modifier = Modifier
-                                                .height(32.dep)
-                                                .width(20.dep)
-                                        )
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            /* notifier.notify(
-                                         MyDataIds.back
-                                     )*/
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.DeleteOutline,
-                                            contentDescription = "DeleteOutline",
-                                            tint = Color(0xFFD62B2B)
-                                        )
-                                    }
-                                }
+                                Spacer(modifier = Modifier.height(6.dep))
                             }
-                            Spacer(modifier = Modifier.height(6.dep))
-                            Divider(
-                                thickness = .8.dep,
-                                color = Color(0xFFEBEBEB)
-                            )
-                            Spacer(modifier = Modifier.height(6.dep))
                         }
                     }
                 }
             }
-        }
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                /*.padding(horizontal = 24.dep)
-                .padding(bottom = 60.dep)*/
-                .fillMaxSize()
-        ) {
-            Row(
+            Box(
+                contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    /*.padding(horizontal = 24.dep)
+                    .padding(bottom = 60.dep)*/
+                    .fillMaxSize()
             ) {
-                Button(
-                    onClick = {
-                        notifier.notify(MyDataIds.confirmDispatch)
-                    },
+                Row(
                     modifier = Modifier
-                        .height(50.dep)
-                        //.fillMaxWidth()
-                        .weight(.6f),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dep,
-                        pressedElevation = 10.dep
-                    ),
-                    shape = RectangleShape
+                        .fillMaxWidth()
                 ) {
-                    if (loadingState.value) {
-                        CircularProgressIndicator(
-                            color = Color.White
-                        )
-                    } else {
-                        Text(
-                            "Confirm Dispatch",
-                            fontSize = 16.sep,
-                            color = Color.White
-                        )
+                    Button(
+                        onClick = {
+                            notifier.notify(MyDataIds.confirmDispatch)
+                        },
+                        modifier = Modifier
+                            .height(50.dep)
+                            //.fillMaxWidth()
+                            .weight(.6f),
+                        colors = ButtonDefaults.buttonColors(Color(0xFF699E73)),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dep,
+                            pressedElevation = 10.dep
+                        ),
+                        shape = RectangleShape
+                    ) {
+                        if (loadingState.value) {
+                            CircularProgressIndicator(
+                                color = Color.White
+                            )
+                        } else {
+                            Text(
+                                "Confirm Dispatch",
+                                fontSize = 16.sep,
+                                color = Color.White
+                            )
+                        }
+                    }
+                    Button(
+                        onClick = {
+                            //notifier.notify(MyDataIds.orderConfirm,)
+                        },
+                        modifier = Modifier
+                            .height(50.dep)
+                            //.fillMaxWidth()
+                            .weight(.4f),
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFEB56)),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dep,
+                            pressedElevation = 10.dep
+                        ),
+                        shape = RectangleShape
+                    ) {
+                        if (loadingState.value) {
+                            CircularProgressIndicator(
+                                color = Color.White
+                            )
+                        } else {
+                            Text(
+                                "Download",
+                                fontSize = 16.sep,
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-                Button(
-                    onClick = {
-                        //notifier.notify(MyDataIds.orderConfirm,)
-                    },
-                    modifier = Modifier
-                        .height(50.dep)
-                        //.fillMaxWidth()
-                        .weight(.4f),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFFFEB56)),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dep,
-                        pressedElevation = 10.dep
-                    ),
-                    shape = RectangleShape
-                ) {
-                    if (loadingState.value) {
-                        CircularProgressIndicator(
-                            color = Color.White
-                        )
-                    } else {
-                        Text(
-                            "Download",
-                            fontSize = 16.sep,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
 
-        }
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                //.padding(horizontal = 24.dep)
-                .padding(bottom = 50.dep)
-                .fillMaxSize()
-        ) {
-            Column(
+            }
+            Box(
+                contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .background(Color(0xFFF2F2F2))
-                    .padding(top = 8.dep, bottom = 16.dep),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    //.padding(horizontal = 24.dep)
+                    .padding(bottom = 50.dep)
+                    .fillMaxSize()
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                Column(
                     modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
+                        .background(Color(0xFFF2F2F2))
+                        .padding(top = 8.dep, bottom = 16.dep),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Taxable Amount",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        //fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "₹ ${taxableState.value}",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dep))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Taxes",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        //fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "₹ ${taxState.value}",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dep))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Discount",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        //fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "₹ ${discountState.value}",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dep))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dep)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Total",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        //fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "₹ ${totalState.value}",
-                        fontSize = 14.sep,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Taxable Amount",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            //fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "₹ ${taxableState.value}",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dep))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Taxes",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            //fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "₹ ${taxState.value}",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dep))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Discount",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            //fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "₹ ${discountState.value}",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dep))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Total",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            //fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "₹ ${totalState.value}",
+                            fontSize = 14.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
         }
     }
-}
     if (showBottomSheetState) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -609,6 +625,7 @@ fun NameBottomSheetContent(
     bottomSheetVisible: MutableState<Boolean> = remember { mutableStateOf(true) },
     qtyState: State<String> = stringState(key = MyDataIds.qtyState),
     //qty: State<String> = stringState(key = MyDataIds.qtyState),
+    productNameState: State<String> = stringState(key = MyDataIds.productNameState),
 ) {
     var visible by remember { mutableStateOf(true) }
 
@@ -632,7 +649,7 @@ fun NameBottomSheetContent(
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Butter-D-Lite",
+                text = productNameState.value,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2C323A),
@@ -698,7 +715,7 @@ fun NameBottomSheetContent(
             ),
             placeholder = {
                 Text(
-                    qtyState.value,
+                    "Enter quantity",
                     color = Color(0xFF959595),
                     fontSize = 12.sp
                 )
@@ -711,7 +728,7 @@ fun NameBottomSheetContent(
             onClick = {
                 bottomSheetVisible.value = false
                 onClearIconClick.invoke()
-                notifier.notify(MyDataIds.update)
+                notifier.notify(MyDataIds.updateQuantity)
             },
             modifier = Modifier
                 .padding(horizontal = 80.dp)
@@ -734,7 +751,8 @@ fun Dialogue_ui(
     onDismissRequest: () -> Unit,
     notifier: NotificationService = rememberNotifier(),
     productQty: State<String> = stringState(key = MyDataIds.productQty),
-    productPrice: State<String> = stringState(key = MyDataIds.productPrice)
+    productPrice: State<String> = stringState(key = MyDataIds.productPrice),
+    addProductList: SnapshotStateList<AddProductListData> = listState(key = MyDataIds.addProductList),
 ) {
     Dialog(
         onDismissRequest = { onDismissRequest() }
@@ -786,164 +804,221 @@ fun Dialogue_ui(
                 Spacer(modifier = Modifier.height(20.dep))
                 PartiesSearchBox()
                 Spacer(modifier = Modifier.height(28.dep))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 10.dep),
-                    verticalArrangement = Arrangement.spacedBy(20.dep)
-                ) {
-                    items(count = 1) {
-                        Column (
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ){
-                            Row(
-                                //verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dep)
-                                    .fillMaxWidth()
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier
+                if (addProductList.isEmpty()) {
+                    Text(
+                        text = "Search the product",
+                        fontSize = 16.sep,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        modifier = Modifier
+                            .padding(bottom = 20.dep)
+                    )
+                } else {
+
+                    var amountString by remember { mutableStateOf("") }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(bottom = 10.dep),
+                        verticalArrangement = Arrangement.spacedBy(20.dep)
+                    ) {
+                        item {
+                            val orderDetail = addProductList.firstOrNull()
+                            orderDetail?.let {
+                                val unit = orderDetail.unit.first()
+                                var text by remember { mutableStateOf("${unit.name}") }
+                                // Initialize amountString based on the initial unit
+                                if (text == "CB") {
+                                    amountString = unit.amount_string_cb ?: ""
+                                } else {
+                                    amountString = unit.amount_string_pcs ?: ""
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
                                 ) {
-                                    AsyncImage(
-                                        model = R.drawable.jayasales,
-                                        contentDescription = "",
-                                        contentScale = ContentScale.Fit,
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier
-                                            .height(60.dep)
-                                            .width(72.dep)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dep))
-                                    Column {
+                                            .padding(horizontal = 16.dep)
+                                            .fillMaxWidth()
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center,
+                                            modifier = Modifier
+                                        ) {
+                                            AsyncImage(
+                                                model = it.image,
+                                                contentDescription = "",
+                                                contentScale = ContentScale.Fit,
+                                                modifier = Modifier
+                                                    .height(60.dep)
+                                                    .width(72.dep)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dep))
+                                            Column {
+                                                Text(
+                                                    text = it.name,
+                                                    fontSize = 14.sep,
+                                                    color = Color.Black,
+                                                    fontWeight = FontWeight.ExtraBold
+                                                )
+                                                Text(
+                                                    text = "",
+                                                    fontSize = 2.sep,
+                                                    color = Color.Black,
+                                                    //fontWeight = FontWeight.ExtraBold
+                                                )
+                                                Text(
+                                                    text = it.info,
+                                                    fontSize = 10.sep,
+                                                    color = Color(0xFF666666),
+                                                    //fontWeight = FontWeight.ExtraBold
+                                                )
+                                            }
+                                        }
                                         Text(
-                                            text = "Butter D-Lite",
+                                            text = it.code,
                                             fontSize = 14.sep,
                                             color = Color.Black,
-                                            fontWeight = FontWeight.ExtraBold
-                                        )
-                                        Text(
-                                            text = "10016",
-                                            fontSize = 14.sep,
-                                            color = Color.Black,
-                                            //fontWeight = FontWeight.ExtraBold
-                                        )
-                                        Text(
-                                            text = "300 x 16 Pcs. Per CB",
-                                            fontSize = 10.sep,
-                                            color = Color(0xFF666666),
-                                            //fontWeight = FontWeight.ExtraBold
+                                            modifier = Modifier
+                                            //.padding(horizontal = 16.dp)
                                         )
                                     }
-                                }
-                                Text(
-                                    text = "434673",
-                                    fontSize = 14.sep,
-                                    color = Color.Black,
-                                    modifier = Modifier
-                                    //.padding(horizontal = 16.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(12.dep))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dep)
-                                    .fillMaxWidth()
-                            ) {
-                                val viewModel: DueDeliveryDetailsViewModel = viewModel()
-                                var text by remember { mutableStateOf("CB") }
-
-                                Box(
-                                    modifier = Modifier
-                                        .border(1.dp, Color(0xFFD1D1D1), RoundedCornerShape(4.dp))
-                                        .height(64.dep)
-                                        .width(80.dep)
-                                        .clickable {
-                                            text = if (text == "CB") "Pcs" else "CB"
-                                            viewModel.setSelectedText(text)
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = text,
-                                        fontSize = 12.sep,
-                                        color = Color.Black,
+                                    Spacer(modifier = Modifier.height(12.dep))
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier
-                                        //.padding(horizontal = 16.dp)
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .border(1.dp, Color(0xFFD1D1D1), RoundedCornerShape(4.dp))
-                                        .height(64.dep)
-                                        .width(80.dep),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    OutlinedTextField(
-                                        value = productQty.value,
-                                        onValueChange = {
-                                            notifier.notify(MyDataIds.productQty, it)
-                                        },
-                                        placeholder = {
+                                            .padding(horizontal = 16.dep)
+                                            .fillMaxWidth()
+                                    ) {
+                                        val viewModel: DueDeliveryDetailsViewModel = viewModel()
+                                        var text by remember { mutableStateOf("${unit.name}") }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .border(
+                                                    1.dp,
+                                                    Color(0xFFD1D1D1),
+                                                    RoundedCornerShape(4.dp)
+                                                )
+                                                .height(64.dp)
+                                                .width(80.dp)
+                                                .clickable {
+                                                    val newText = if (text == "CB") {
+                                                        viewModel.setSelectedText(
+                                                            "Pcs",
+                                                            "unit_pcs"
+                                                        )
+                                                        "Pcs"
+                                                    } else {
+                                                        viewModel.setSelectedText(
+                                                            "CB",
+                                                            "unit_cb"
+                                                        )
+                                                        "CB"
+                                                    }
+                                                    text = newText
+                                                    if (text == "CB") {
+                                                        amountString = unit.amount_string_cb ?: ""
+                                                    } else {
+                                                        amountString = unit.amount_string_pcs ?: ""
+                                                    }
+                                                },
+                                            contentAlignment = Alignment.Center
+                                        ) {
                                             Text(
-                                                text = "quantity",
-                                                color = Color(0XFF898989),
-                                                fontSize = 10.sep
+                                                text = text,
+                                                fontSize = 12.sp,
+                                                color = Color.Black,
                                             )
-                                        },
-                                        maxLines = 1,
-                                        textStyle = TextStyle(
-                                            fontSize = 14.sep
-                                        ),
+                                        }
+                                        Box(
+                                            modifier = Modifier
+                                                .border(
+                                                    1.dp,
+                                                    Color(0xFFD1D1D1),
+                                                    RoundedCornerShape(4.dp)
+                                                )
+                                                .height(64.dep)
+                                                .width(80.dep),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            OutlinedTextField(
+                                                value = productQty.value,
+                                                onValueChange = {
+                                                    notifier.notify(MyDataIds.productQty, it)
+                                                },
+                                                placeholder = {
+                                                    Text(
+                                                        text = "quantity",
+                                                        color = Color(0XFF898989),
+                                                        fontSize = 10.sep
+                                                    )
+                                                },
+                                                maxLines = 1,
+                                                textStyle = TextStyle(
+                                                    fontSize = 14.sep
+                                                ),
 
-                                        keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.Number,
-                                            imeAction = ImeAction.Done
-                                        ),
-                                        singleLine = true,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .border(1.dp, Color(0xFFD1D1D1), RoundedCornerShape(4.dp))
-                                        .height(64.dep)
-                                        .width(80.dep),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    OutlinedTextField(
-                                        value = productPrice.value,
-                                        onValueChange = {
-                                            notifier.notify(MyDataIds.productPrice, it)
-                                        },
-                                        placeholder = {
-                                            Text(
-                                                text = "$353",
-                                                color = Color(0XFF898989),
-                                                fontSize = 14.sep
+                                                keyboardOptions = KeyboardOptions(
+                                                    keyboardType = KeyboardType.Number,
+                                                    imeAction = ImeAction.Done
+                                                ),
+                                                singleLine = true,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
                                             )
-                                        },
-                                        maxLines = 1,
-                                        textStyle = TextStyle(
-                                            fontSize = 14.sep
-                                        ),
+                                        }
+                                        Box(
+                                            modifier = Modifier
+                                                .border(
+                                                    1.dp,
+                                                    Color(0xFFD1D1D1),
+                                                    RoundedCornerShape(4.dp)
+                                                )
+                                                .height(64.dep)
+                                                .width(80.dep),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            amountString = if (text == "CB") unit.amount_string_cb ?: "" else unit.amount_string_pcs ?: ""
+                                            OutlinedTextField(
+                                                value = productPrice.value,
+                                                onValueChange = {
+                                                    amountString = it
+                                                    notifier.notify(MyDataIds.productPrice, it)
+                                                },
+                                                placeholder = {
+                                                    Text(
+                                                        text = if (text == "CB") {
+                                                            unit.amount_string_cb ?: ""
+                                                        } else {
+                                                            unit.amount_string_pcs ?: ""
+                                                        },
+                                                        color = Color(0XFF898989),
+                                                        fontSize = 14.sp
+                                                    )
+                                                },
+                                                maxLines = 1,
+                                                textStyle = TextStyle(
+                                                    fontSize = 14.sep
+                                                ),
 
-                                        keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.Number,
-                                            imeAction = ImeAction.Done
-                                        ),
-                                        singleLine = true,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                    )
+                                                keyboardOptions = KeyboardOptions(
+                                                    keyboardType = KeyboardType.Number,
+                                                    imeAction = ImeAction.Done
+                                                ),
+                                                singleLine = true,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                            )
+                                        }
+
+                                    }
                                 }
-
                             }
                         }
                     }
@@ -973,6 +1048,7 @@ fun Dialogue_ui(
     }
 }
 
+
 @Composable
 fun PartiesSearchBox(
     notifier: NotificationService = rememberNotifier(),
@@ -994,6 +1070,7 @@ fun PartiesSearchBox(
         trailingIcon = {
             IconButton(
                 onClick = {
+                    notifier.notify(MyDataIds.search)
                 }
             ) {
                 Icon(

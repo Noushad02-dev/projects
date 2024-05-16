@@ -97,4 +97,10 @@ enum class MyDataIds {
     orderStatus,
     history,
     historyDetails,
+    remove,
+    productNameState,
+    updateQuantity,
+    addProductList,
+    search,
+    orderHistoryList,
 }

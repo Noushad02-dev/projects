@@ -10,10 +10,15 @@ import com.debduttapanda.j3lib.SoftInputMode
 import com.debduttapanda.j3lib.WirelessViewModel
 import com.debduttapanda.j3lib.models.EventBusDescription
 import com.debduttapanda.j3lib.models.Route
+import com.vxplore.newjayadistributor.App
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
+import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.Datum
+import com.vxplore.newjayadistributor.model.MyStockAllProducts
+import com.vxplore.newjayadistributor.model.MyStockDatum
+import com.vxplore.newjayadistributor.repository.ApiInterface
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,8 +39,9 @@ class MyStockViewModel @Inject constructor(
     private val categories = mutableStateListOf<CategoriesDataResponse.CategoriesData>()
     private val password = mutableStateOf("")
     private val categoryId = mutableStateOf("")
-    private val productList = mutableStateListOf<Datum>()
+    private val productList = mutableStateListOf<MyStockDatum>()
     private val indexRouteId = mutableStateOf(0)
+    private val userId = mutableStateOf("")
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -55,9 +61,7 @@ class MyStockViewModel @Inject constructor(
                 productQty.value = arg as String
             }
             MyDataIds.stockUpdate->{
-                navigation {
-                    navigate(Routes.home.full)
-                }
+                updateProduct()
             }
             MyDataIds.brandChange -> {
                 val brandIndex = arg as Int
@@ -73,6 +77,7 @@ class MyStockViewModel @Inject constructor(
                 val cat = repo.getCategory()
                 Log.d("BrandChange", "Selected Brand ID: $cat")
                 onBrandChange()
+                productList()
             }
         }
     }
@@ -94,6 +99,7 @@ class MyStockViewModel @Inject constructor(
         )
         setSoftInputMode(SoftInputMode.adjustPan)
         categoryList()
+        productList()
     }
 
     private fun categoryList() {
@@ -114,7 +120,7 @@ class MyStockViewModel @Inject constructor(
                         val categoryId = matchingCategory?.uid ?: ""
                         repo.setCategory(categoryId)
                         Log.d("dcdscx", categoryId)
-                        //productList()
+                        productList()
                     }
                 }
             } catch (e: Exception) {
@@ -130,6 +136,72 @@ class MyStockViewModel @Inject constructor(
             val selectedBrand = categories[selectedBrandIndex]
             val productBrandId = selectedBrand.uid ?: ""
             categoryId.value = productBrandId
+        }
+    }
+
+    private fun productList(){
+        loadingState.value = true
+        userId.value = repo.getUserId()!!
+        password.value = repo.getPassCode()!!
+        Log.d("vhndf",password.value)
+        categoryId.value = repo.getCategory()!!
+        Log.d("vbgfb",categoryId.value)
+        viewModelScope.launch {
+            val response=
+                repo.myStockList(
+                    userId.value,
+                    categoryId.value,
+                    password.value
+                )
+            //val response = repo.fetchProduct(categoryId.value,searchProductQuery.value,password.value)
+            if (response?.status == true){
+                productList.clear()
+                productList.addAll(response.data)
+                loadingState.value = false
+
+            }
+        }
+    }
+    private fun updateProduct() {
+        loadingState.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            userId.value = repo.getUserId() ?: ""
+            password.value = repo.getPassCode() ?: ""
+            try {
+                val productsInCart = App.cart.get().filter { (_, quantity) ->
+                    quantity > 0
+                }.map { (productId, quantity) ->
+                    MyStockAllProducts(productId, quantity)
+                }
+
+                if (productsInCart.isNotEmpty()) {
+                    val viewCartRequest =
+                        ApiInterface.UpdateProductRequest(userId.value, password.value,productsInCart)
+
+                    val response =
+                        repo.updateProduct(userId.value, password.value, viewCartRequest.products)
+
+                    Log.d("bhcxbh", response.toString())
+
+                    if (response?.status == true) {
+                        toast(response.message)
+                        navigation {
+                            navigate(Routes.home.full)
+                        }
+                    }
+                } else {
+                    toast("Please select at least one item to add to the cart")
+                    Log.d(
+                        "bhcxbh",
+                        "No products with quantity greater than 0 to send to the server"
+                    )
+                }
+            } catch (e: Exception) {
+                //handleNoConnectivity()
+                Log.d("fgffg", "${e.message}")
+            } finally {
+                loadingState.value = false
+            }
         }
     }
 }

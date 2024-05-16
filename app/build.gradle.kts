@@ -100,7 +100,8 @@ dependencies {
     debugImplementation("com.github.chuckerteam.chucker:library:3.5.2")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.3.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-
+    /*implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")*/
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     // implementation ("com.google.accompanist:accompanist-swiperefresh:0.35.0-alpha")

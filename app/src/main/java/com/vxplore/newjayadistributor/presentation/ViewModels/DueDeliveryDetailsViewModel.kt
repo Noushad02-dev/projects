@@ -12,6 +12,7 @@ import com.debduttapanda.j3lib.models.EventBusDescription
 import com.debduttapanda.j3lib.models.Route
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
+import com.vxplore.newjayadistributor.model.AddProductListData
 import com.vxplore.newjayadistributor.model.CartProduct
 import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.repository.Repository
@@ -40,11 +41,14 @@ class DueDeliveryDetailsViewModel @Inject constructor(
     private val total = mutableStateOf("")
     private val storeName = mutableStateOf("")
     private val orderId = mutableStateOf("")
+    private val productId = mutableStateOf("")
     private val route = mutableStateOf("")
     private val orderAmount = mutableStateOf("")
     private val count = mutableStateOf("")
     private val date = mutableStateOf("")
     private val qty = mutableStateOf("")
+    private val productName = mutableStateOf("")
+    private val addProductList = mutableStateListOf<AddProductListData>()
     val taxableState: State<String> get() = taxable
     val taxState: State<String> get() = tax
     val discountState: State<String> get() = discount
@@ -56,9 +60,11 @@ class DueDeliveryDetailsViewModel @Inject constructor(
     val countState: State<String> get() = count
     val dateState: State<String> get() = date
     val qtyState: State<String> get() = qty
+    val productNameState: State<String> get() = productName
 
-    fun setSelectedText(text: String) {
-        selectedText.value = text
+
+    fun setSelectedText(text: String, id: String) {
+        selectedText.value = id
         Log.d("hcvf", selectedText.value)
     }
 
@@ -84,10 +90,12 @@ class DueDeliveryDetailsViewModel @Inject constructor(
 
             MyDataIds.add -> {
                 openDialog.value = true
+                //fetchAddProductList()
             }
 
             MyDataIds.addProduct -> {
                 openDialog.value = false
+                addProduct()
             }
 
             MyDataIds.cancelDialog -> {
@@ -96,6 +104,11 @@ class DueDeliveryDetailsViewModel @Inject constructor(
 
             MyDataIds.partiesSearch -> {
                 partiesSearch.value = arg as String
+                //fetchAddProductList()
+            }
+
+            MyDataIds.search -> {
+                fetchAddProductList()
             }
 
             MyDataIds.productQty -> {
@@ -108,6 +121,32 @@ class DueDeliveryDetailsViewModel @Inject constructor(
 
             MyDataIds.confirmDispatch -> {
                 confirmDispatchOrder()
+            }
+
+            MyDataIds.remove -> {
+                val (clickedRouteIndex, clickedProductId) = arg as Pair<Int, String>
+                val clickedRoute = orderDtls.getOrNull(clickedRouteIndex)
+                if (clickedRoute != null) {
+                    val orderId = clickedRoute.order_id
+                    repo.setOrderReceivedId(orderId)
+                    repo.setProductId(clickedProductId)
+                }
+                removeProduct()
+            }
+
+            MyDataIds.update -> {
+                val (clickedRouteIndex, clickedProductId, productsName) = arg as Triple<Int, String, String>
+                val clickedRoute = orderDtls.getOrNull(clickedRouteIndex)
+                if (clickedRoute != null) {
+                    val orderId = clickedRoute.order_id
+                    repo.setOrderReceivedId(orderId)
+                    repo.setProductId(clickedProductId)
+                    productName.value = productsName
+                }
+            }
+
+            MyDataIds.updateQuantity -> {
+                updateProduct()
             }
         }
     }
@@ -136,6 +175,8 @@ class DueDeliveryDetailsViewModel @Inject constructor(
             MyDataIds.dateState to dateState,
             MyDataIds.qtyState to qtyState,
             MyDataIds.ordersDetails to orderDtls,
+            MyDataIds.productNameState to productNameState,
+            MyDataIds.addProductList to addProductList,
         )
         orderDetails()
     }
@@ -150,7 +191,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                 val response = repo.orderDetails(userID.value, orderId.value, password.value)
                 if (response?.status == true) {
                     taxable.value =
-                        response.data.joinToString { it.order_amount_string }// Accessing order_amount_string
+                        response.data.joinToString { it.taxable_amount_string }// Accessing order_amount_string
                     tax.value = response.data.joinToString { it.taxes_amount_string }
                     discount.value = response.data.joinToString { it.discount_amount_string }
                     total.value = response.data.joinToString { it.total_amount_string }
@@ -180,14 +221,127 @@ class DueDeliveryDetailsViewModel @Inject constructor(
         password.value = repo.getPassCode()!!
         viewModelScope.launch {
             try {
-                val response = repo.confirmDispatch(password.value,orderId.value)
-                if (response?.status == true){
+                val response = repo.confirmDispatch(password.value, orderId.value)
+                if (response?.status == true) {
                     toast(response.message)
                     navigation {
                         navigate(Routes.home.full)
                     }
-                }else{
+                } else {
                     if (response != null) {
+                        toast(response.message)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching order details: ${e.message}")
+            } finally {
+                loadingState.value = false
+            }
+        }
+    }
+
+    private fun removeProduct() {
+        loadingState.value = true
+        userID.value = repo.getUserId()!!
+        orderId.value = repo.getOrderReceivedId()!!
+        productId.value = repo.getProductId()!!
+        password.value = repo.getPassCode()!!
+        viewModelScope.launch {
+            try {
+                val response = repo.removeOrderProduct(
+                    userID.value,
+                    orderId.value,
+                    productId.value,
+                    password.value
+                )
+                if (response?.status == true) {
+                    orderDetails()
+                    toast(response.message)
+                } else {
+                    if (response != null) {
+                        toast(response.message)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching order details: ${e.message}")
+            } finally {
+                loadingState.value = false
+            }
+        }
+    }
+
+    private fun updateProduct() {
+        loadingState.value = true
+        userID.value = repo.getUserId()!!
+        orderId.value = repo.getOrderReceivedId()!!
+        productId.value = repo.getProductId()!!
+        password.value = repo.getPassCode()!!
+        viewModelScope.launch {
+            try {
+                val response = repo.updateProduct(
+                    userID.value,
+                    orderId.value,
+                    productId.value,
+                    password.value,
+                    profilename.value
+                )
+                if (response?.status == true) {
+                    if (response?.status == true) {
+                        orderDetails()
+                        toast(response.message)
+                    } else {
+                        toast(response.message)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching order details: ${e.message}")
+            } finally {
+                loadingState.value = false
+            }
+        }
+    }
+
+    private fun fetchAddProductList() {
+        loadingState.value = true
+        userID.value = repo.getUserId()!!
+        orderId.value = repo.getOrderReceivedId()!!
+        password.value = repo.getPassCode()!!
+        viewModelScope.launch {
+            try {
+                val response = repo.addProductList(
+                    userID.value,
+                    orderId.value,
+                    password.value,
+                    partiesSearch.value
+                )
+                if (response?.status == true) {
+                    val pId = response.data.product_id
+                    repo.setProductId(pId)
+                    addProductList.clear()
+                    addProductList.addAll(listOf(response.data))
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching order details: ${e.message}")
+            } finally {
+                loadingState.value = false
+            }
+        }
+    }
+
+    private fun addProduct() {
+        loadingState.value = true
+        userID.value = repo.getUserId()!!
+        orderId.value = repo.getOrderReceivedId()!!
+        password.value = repo.getPassCode()!!
+        productId.value = repo.getProductId()!!
+        viewModelScope.launch {
+            try {
+                val response = repo.addProduct(userID.value,orderId.value,password.value,productId.value, selectedText.value,productQty.value,productPrice.value)
+                if (response?.status == true) {
+                    if (response.status) {
+                        orderDetails()
+                        toast(response.message)
+                    } else {
                         toast(response.message)
                     }
                 }
@@ -198,5 +352,4 @@ class DueDeliveryDetailsViewModel @Inject constructor(
             }
         }
     }
-
 }

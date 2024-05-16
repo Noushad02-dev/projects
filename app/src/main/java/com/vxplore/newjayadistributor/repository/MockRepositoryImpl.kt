@@ -1,6 +1,7 @@
 package com.vxplore.newjayadistributor.repository
 
 import android.util.Log
+import com.vxplore.newjayadistributor.model.AddProductListDataResponse
 import com.vxplore.newjayadistributor.model.AllProducts
 import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.DashBoardData
@@ -10,7 +11,10 @@ import com.vxplore.newjayadistributor.model.FetchLocationDataResponse
 import com.vxplore.newjayadistributor.model.GetOtpResponse
 import com.vxplore.newjayadistributor.model.LocationDataResponse
 import com.vxplore.newjayadistributor.model.LoginDataResponse
+import com.vxplore.newjayadistributor.model.MyStockAllProducts
+import com.vxplore.newjayadistributor.model.MyStockListDataResponse
 import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
+import com.vxplore.newjayadistributor.model.OrderHistoryDataResponse
 import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
 import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
@@ -97,6 +101,14 @@ class MockRepositoryImpl @Inject constructor(
 
     override fun getOrderReceivedId(): String? {
         return myPref.getOrderReceivedId()
+    }
+
+    override fun setProductId(productId: String?) {
+        myPref.setProductId(productId)
+    }
+
+    override fun getProductId(): String? {
+        return myPref.getProductId()
     }
 
     override suspend fun login(email: String, password: String): LoginDataResponse? {
@@ -306,6 +318,102 @@ class MockRepositoryImpl @Inject constructor(
         password: String
     ): OrderStatusDataResponse? {
         val response = apiHelper.orderStatus(userId,order_id,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun removeOrderProduct(
+        userId: String,
+        order_id: String,
+        product_id: String,
+        password: String
+    ): ResetDataResponse? {
+        val response = apiHelper.removeOrderProduct(userId,order_id,product_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun updateProduct(
+        userId: String,
+        order_id: String,
+        product_id: String,
+        password: String,
+        quantity: String
+    ): ResetDataResponse? {
+        val response = apiHelper.updateProduct(userId,order_id, product_id, password, quantity)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun updateProduct(
+        userId: String,
+        password: String,
+        products: List<MyStockAllProducts>
+    ): ViewCartDataResponse? {
+        val response = apiHelper.updateProduct(ApiInterface.UpdateProductRequest(userId, password, products))
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            Log.e("Repository", "Error: ${response.code()}")
+            null
+        }
+    }
+
+    override suspend fun addProductList(
+        userId: String,
+        order_id: String,
+        password: String,
+        search_text: String
+    ): AddProductListDataResponse? {
+        val response = apiHelper.addProductList(userId,order_id, password, search_text)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun addProduct(
+        userId: String,
+        order_id: String,
+        password: String,
+        product_id: String,
+        unit: String,
+        quantity: String,
+        price_per_unit_string: String
+    ): ResetDataResponse? {
+        val response = apiHelper.addProduct(userId,order_id, password, product_id, unit, quantity, price_per_unit_string)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun orderHistory(userId: String, password: String): OrderHistoryDataResponse? {
+        val response = apiHelper.orderHistory(userId,password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun myStockList(
+        userId: String,
+        order_id: String,
+        password: String
+    ): MyStockListDataResponse? {
+        val response = apiHelper.myStockList(userId,order_id, password)
         return if (response.isSuccessful){
             response.body()
         }else{
