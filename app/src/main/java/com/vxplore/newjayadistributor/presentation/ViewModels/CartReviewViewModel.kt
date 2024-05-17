@@ -13,12 +13,12 @@ import com.debduttapanda.j3lib.models.Route
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
 import com.vxplore.newjayadistributor.model.CartProduct
-import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.LocationDatum
-import com.vxplore.newjayadistributor.model.ShowCartDataResponse
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +41,7 @@ class CartReviewViewModel @Inject constructor(
     private val userId = mutableStateOf("")
     private val locationId = mutableStateOf("")
     private val index = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
 
 
     val taxableState: State<String> get() = taxable
@@ -86,6 +87,10 @@ class CartReviewViewModel @Inject constructor(
                 Log.d("dvfv", index.value)
                 repo.setLocationId(index.value)
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                viewCartProduct()
+            }
         }
     }
 
@@ -102,6 +107,7 @@ class CartReviewViewModel @Inject constructor(
             MyDataIds.discountState to discountState,
             MyDataIds.totalState to totalState,
             MyDataIds.location to locationList,
+            MyDataIds.lostInternet to lostInternet,
         )
         viewCartProduct()
         locationList()
@@ -112,17 +118,24 @@ class CartReviewViewModel @Inject constructor(
         userID.value = repo.getUserId()!!
         password.value = repo.getPassCode()!!
         viewModelScope.launch {
-            val response = repo.showCart(userID.value, password.value)
-            if (response?.status == true) {
-                taxable.value = response.taxable_amount_string
-                previous.value = response.previous_outstanding_amount_string
-                tax.value = response.tax_amount_string
-                discount.value = response.discount_amount_string
-                total.value = response.current_total_amount_string
-                cartList.clear()
-                cartList.addAll(response.cart_products)
+            try {
+                val response = repo.showCart(userID.value, password.value)
+                if (response?.status == true) {
+                    taxable.value = response.taxable_amount_string
+                    previous.value = response.previous_outstanding_amount_string
+                    tax.value = response.tax_amount_string
+                    discount.value = response.discount_amount_string
+                    total.value = response.current_total_amount_string
+                    cartList.clear()
+                    cartList.addAll(response.cart_products)
+                    loadingState.value = false
+                }
+            }catch (e: Exception) {
+                handleNoConnectivity()
+            } finally {
                 loadingState.value = false
             }
+
         }
     }
 
@@ -131,17 +144,24 @@ class CartReviewViewModel @Inject constructor(
         userID.value = repo.getUserId()!!
         cartID.value = repo.getCartId()!!
         viewModelScope.launch {
-            val response = repo.remove(userID.value, cartID.value)
-            if (response?.status == true) {
-                toast(response.message)
-                viewCartProduct()
-                loadingState.value = false
-            } else {
-                if (response != null) {
+            try {
+                val response = repo.remove(userID.value, cartID.value)
+                if (response?.status == true) {
                     toast(response.message)
+                    viewCartProduct()
                     loadingState.value = false
+                } else {
+                    if (response != null) {
+                        toast(response.message)
+                        loadingState.value = false
+                    }
                 }
+            }catch (e: Exception) {
+                handleNoConnectivity()
+            } finally {
+                loadingState.value = false
             }
+
         }
     }
 
@@ -157,13 +177,12 @@ class CartReviewViewModel @Inject constructor(
                     locationList.addAll(response.data)
                 }
             } catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
         }
     }
-
     private fun placeOrder() {
         userId.value = repo.getUserId()!!
         password.value = repo.getPassCode()!!
@@ -183,10 +202,15 @@ class CartReviewViewModel @Inject constructor(
                     }
                 }
             }catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

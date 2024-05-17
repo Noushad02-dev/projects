@@ -40,6 +40,7 @@ class PlaceOrderViewModel @Inject constructor(
     private val productList = mutableStateListOf<Datum>()
     private val indexRouteId = mutableStateOf(0)
     private val userId = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
 
 
     fun setSelectedText(text: String, id: String) {
@@ -97,6 +98,11 @@ class PlaceOrderViewModel @Inject constructor(
                 productList()
             }
 
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                categoryList()
+                productList()
+            }
 
         }
     }
@@ -112,6 +118,7 @@ class PlaceOrderViewModel @Inject constructor(
             MyDataIds.categoryList to categories,
             MyDataIds.productList to productList,
             MyDataIds.brandChange to selectedBrandTabId,
+            MyDataIds.lostInternet to lostInternet,
         )
         setSoftInputMode(SoftInputMode.adjustPan)
         categoryList()
@@ -140,7 +147,7 @@ class PlaceOrderViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                // Todo
+                handleNoConnectivity()
             }
         }
     }
@@ -152,19 +159,27 @@ class PlaceOrderViewModel @Inject constructor(
         categoryId.value = repo.getCategory()!!
         Log.d("vbgfb",categoryId.value)
         viewModelScope.launch {
-            val response=
-                repo.fetchProduct(
-                    categoryId.value,
-                    searchProductQuery.value,
-                    password.value
-                )
-            //val response = repo.fetchProduct(categoryId.value,searchProductQuery.value,password.value)
-            if (response?.status == true){
-                productList.clear()
-                productList.addAll(response.data)
-                loadingState.value = false
+            try {
+                val response=
+                    repo.fetchProduct(
+                        categoryId.value,
+                        searchProductQuery.value,
+                        password.value
+                    )
+                //val response = repo.fetchProduct(categoryId.value,searchProductQuery.value,password.value)
+                if (response?.status == true){
+                    productList.clear()
+                    productList.addAll(response.data)
+                    loadingState.value = false
 
+                }
+            }catch (e: Exception) {
+                handleNoConnectivity()
+                Log.d("fgffg", "${e.message}")
+            } finally {
+                loadingState.value = false
             }
+
         }
     }
     private fun onBrandChange() {
@@ -247,13 +262,17 @@ class PlaceOrderViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                //handleNoConnectivity()
+                handleNoConnectivity()
                 Log.d("fgffg", "${e.message}")
             } finally {
                 loadingState.value = false
             }
         }
     }
-
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
+        }
+    }
 
 }

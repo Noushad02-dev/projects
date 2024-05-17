@@ -14,7 +14,9 @@ import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +38,7 @@ class HomeViewModel @Inject constructor(
     private val loadingState = mutableStateOf(false)
     private val user_id = mutableStateOf("")
     private val password = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
 
     val receivedCountState: State<String> get() = receivedCount
     val receivedAmountState: State<String> get() = receivedAmount
@@ -130,6 +133,10 @@ class HomeViewModel @Inject constructor(
                     navigate(Routes.orderHistory.full)
                 }
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                dashboard()
+            }
         }
     }
 
@@ -151,6 +158,7 @@ class HomeViewModel @Inject constructor(
             MyDataIds.trackCountState to trackCountState,
             MyDataIds.trackAmountState to trackAmountState,
             MyDataIds.loadingState to loadingState,
+            MyDataIds.lostInternet to lostInternet,
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
         viewModelScope.launch {
@@ -189,10 +197,16 @@ class HomeViewModel @Inject constructor(
                     trackAmount.value = list.track_order.amount_string
                 }
             }catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("hgbj", "Error: ${e.message}")
             }finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

@@ -76,5 +76,18 @@ fun SplashScreen(
             )
         }
 
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .padding(bottom = 30.dep)
+                .fillMaxSize()
+        ) {
+            Text(
+                text = "Version : ${versionName.value}",
+                fontSize = 14.sep,
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }

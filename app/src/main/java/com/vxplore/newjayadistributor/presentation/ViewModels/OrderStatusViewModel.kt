@@ -15,7 +15,9 @@ import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.model.OrderStatusDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +33,7 @@ class OrderStatusViewModel @Inject constructor(
     private val date = mutableStateOf("")
     private val orderID = mutableStateOf("")
     private val orderStatus = mutableStateListOf<OrderStatusDatum>()
+    private val lostInternet = mutableStateOf(false)
     val orderAmountState: State<String> get() = orderAmount
     val orderIdState: State<String> get() = orderId
     val countState: State<String> get() = count
@@ -50,6 +53,10 @@ class OrderStatusViewModel @Inject constructor(
             MyDataIds.back -> {
                 popBackStack()
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                orderStatus()
+            }
         }
     }
 
@@ -64,6 +71,7 @@ class OrderStatusViewModel @Inject constructor(
             MyDataIds.countState to countState,
             MyDataIds.dateState to dateState,
             MyDataIds.orderStatus to orderStatus,
+            MyDataIds.lostInternet to lostInternet,
         )
         orderStatus()
     }
@@ -85,10 +93,16 @@ class OrderStatusViewModel @Inject constructor(
                     orderStatus.addAll(response.data)
                 }
             }catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

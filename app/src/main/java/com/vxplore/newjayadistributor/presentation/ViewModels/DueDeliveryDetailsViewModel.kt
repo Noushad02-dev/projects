@@ -1,7 +1,14 @@
 package com.vxplore.newjayadistributor.presentation.ViewModels
 
+import android.app.DownloadManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +24,9 @@ import com.vxplore.newjayadistributor.model.CartProduct
 import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,7 +57,12 @@ class DueDeliveryDetailsViewModel @Inject constructor(
     private val date = mutableStateOf("")
     private val qty = mutableStateOf("")
     private val productName = mutableStateOf("")
+    private val pdf = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
+
+    val pdfState: State<String> get() = pdf
     private val addProductList = mutableStateListOf<AddProductListData>()
+    var pdfDownloadCallback: PdfDownloadCallback? = null
     val taxableState: State<String> get() = taxable
     val taxState: State<String> get() = tax
     val discountState: State<String> get() = discount
@@ -148,6 +162,13 @@ class DueDeliveryDetailsViewModel @Inject constructor(
             MyDataIds.updateQuantity -> {
                 updateProduct()
             }
+            MyDataIds.downloadPdf->{
+                download()
+            }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                orderDetails()
+            }
         }
     }
 
@@ -177,6 +198,8 @@ class DueDeliveryDetailsViewModel @Inject constructor(
             MyDataIds.ordersDetails to orderDtls,
             MyDataIds.productNameState to productNameState,
             MyDataIds.addProductList to addProductList,
+            MyDataIds.pdfState to pdfState,
+            MyDataIds.lostInternet to lostInternet,
         )
         orderDetails()
     }
@@ -208,6 +231,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     orderDtls.addAll(response.data)
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -233,6 +257,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -263,6 +288,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -294,6 +320,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -321,6 +348,7 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     addProductList.addAll(listOf(response.data))
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -346,10 +374,39 @@ class DueDeliveryDetailsViewModel @Inject constructor(
                     }
                 }
             }catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
             }
         }
     }
+    fun download() {
+        loadingState.value = true
+        userID.value = repo.getUserId()!!
+        orderId.value = repo.getOrderReceivedId()!!
+        password.value = repo.getPassCode()!!
+        viewModelScope.launch {
+            try {
+                val response = repo.pdf(userID.value, orderId.value, password.value)
+                if (response?.status == true) {
+                    val pdfUrl = response.data
+                    pdfDownloadCallback?.invoke(pdfUrl)
+                    pdf.value = pdfUrl
+                }
+            } catch (e: Exception) {
+                handleNoConnectivity()
+                Log.e("ViewModel", "Error fetching order details: ${e.message}")
+            } finally {
+                loadingState.value = false
+            }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
+        }
+    }
 }
+
+typealias PdfDownloadCallback = (pdfUrl: String) -> Unit

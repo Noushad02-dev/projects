@@ -16,7 +16,9 @@ import com.vxplore.newjayadistributor.model.LocData
 import com.vxplore.newjayadistributor.model.OrderReceiveDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +30,7 @@ class OrderReceiveViewModel @Inject constructor(
     private val indexRouteId = mutableStateOf(0)
     private val password = mutableStateOf("")
     private val userId = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -53,6 +56,11 @@ class OrderReceiveViewModel @Inject constructor(
                     navigate(Routes.orderDetails.full)
                 }
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                receivedOrder()
+
+            }
         }
     }
 
@@ -63,6 +71,7 @@ class OrderReceiveViewModel @Inject constructor(
         mapData(
             MyDataIds.loadingState to loadingState,
             MyDataIds.orderReceiveList to orderReceiveList,
+            MyDataIds.lostInternet to lostInternet,
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
         receivedOrder()
@@ -84,10 +93,15 @@ class OrderReceiveViewModel @Inject constructor(
                     }
                 }
             }catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

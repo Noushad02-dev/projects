@@ -17,15 +17,18 @@ class PrefRepositoryImpl @Inject constructor(
     private val LocationId = "LocationId"
     private val OrderReceivedId = "OrderReceivedId"
     private val ProductId = "ProductId"
-    private val myPref: SharedPreferences = context.getSharedPreferences("myPref", Context.MODE_PRIVATE)
+    private lateinit var myPref: SharedPreferences
 
+    init {
+        myPref = context.getSharedPreferences("myPref", Context.MODE_PRIVATE)
+    }
 
     override fun setIsLoggedIn(isLoggedIn: Boolean) {
         myPref.edit().putBoolean(isLoggedInKey,isLoggedIn).apply()
     }
 
     override fun getIsLoggedIn(): Boolean {
-        return  myPref.getBoolean(isLoggedInKey,true)
+        return  myPref.getBoolean(isLoggedInKey,false)
     }
     override fun deleteUserId() {
         myPref.edit().remove(userIdKey).apply()

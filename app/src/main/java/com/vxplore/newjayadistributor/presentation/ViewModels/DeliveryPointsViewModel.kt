@@ -14,7 +14,9 @@ import com.vxplore.newjayadistributor.model.CategoriesDataResponse
 import com.vxplore.newjayadistributor.model.LocationDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +27,7 @@ class DeliveryPointsViewModel @Inject constructor(
     private val password = mutableStateOf("")
     private val userId = mutableStateOf("")
     private val loadingState = mutableStateOf(false)
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -45,15 +48,19 @@ class DeliveryPointsViewModel @Inject constructor(
                    navigate(Routes.addLocation.full)
                }
            }
+           MyDataIds.tryagain -> {
+               lostInternet.value = false
+               locationList()
+           }
        }
     }
-
     override fun onStartUp(route: Route?, arguments: Bundle?) {
     }
     init {
         mapData(
             MyDataIds.locationList to locationList,
             MyDataIds.loadingState to loadingState,
+            MyDataIds.lostInternet to lostInternet,
         )
         locationList()
     }
@@ -70,11 +77,16 @@ class DeliveryPointsViewModel @Inject constructor(
                 }
             }
             catch (e:Exception){
-                //todo
+                handleNoConnectivity()
             }
             finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

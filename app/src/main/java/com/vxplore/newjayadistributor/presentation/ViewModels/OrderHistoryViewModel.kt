@@ -14,7 +14,9 @@ import com.vxplore.newjayadistributor.model.DueDatum
 import com.vxplore.newjayadistributor.model.HistoryDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +28,7 @@ class OrderHistoryViewModel @Inject constructor(
     private val indexRouteId = mutableStateOf(0)
     private val password = mutableStateOf("")
     private val userId = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -50,6 +53,10 @@ class OrderHistoryViewModel @Inject constructor(
                     navigate(Routes.orderDetailsHistory.full)
                 }
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                orderList()
+            }
         }
     }
 
@@ -60,6 +67,7 @@ class OrderHistoryViewModel @Inject constructor(
         mapData(
             MyDataIds.loadingState to loadingState,
             MyDataIds.orderHistoryList to orderHistoryList,
+            MyDataIds.lostInternet to lostInternet,
         )
         orderList()
     }
@@ -76,10 +84,15 @@ class OrderHistoryViewModel @Inject constructor(
                     orderHistoryList.addAll(response.data)
                 }
             }catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

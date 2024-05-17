@@ -1,5 +1,13 @@
 package com.vxplore.newjayadistributor.presentation.Screen
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -69,6 +77,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -111,6 +120,8 @@ fun DueDeliveryDetailsScreen(
     orderAmountState: State<String> = stringState(key = MyDataIds.orderAmountState),
     countState: State<String> = stringState(key = MyDataIds.countState),
     dateState: State<String> = stringState(key = MyDataIds.dateState),
+    pdfState: State<String> = stringState(key = MyDataIds.pdfState),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     if (dialog == true) {
         Dialogue_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
@@ -169,6 +180,9 @@ fun DueDeliveryDetailsScreen(
         }
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         if (loadingState.value) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -465,9 +479,22 @@ fun DueDeliveryDetailsScreen(
                             )
                         }
                     }
+                    val context = LocalContext.current
+                   /* val requestPermissionLauncher =
+                        rememberLauncherForActivityResult(
+                            ActivityResultContracts.RequestPermission()
+                        ) { isGranted: Boolean ->
+                            if (isGranted) {
+                                downloadPdf(context, pdfState)
+                            }
+                        }*/
+
+                    val pdfUri = Uri.parse("${pdfState.value}")
+                    //downloadPdf(context, pdfUri)
                     Button(
                         onClick = {
-                            //notifier.notify(MyDataIds.orderConfirm,)
+                            notifier.notify(MyDataIds.downloadPdf,)
+                            downloadPdf(context, pdfUri)
                         },
                         modifier = Modifier
                             .height(50.dep)
@@ -1086,4 +1113,18 @@ fun PartiesSearchBox(
             .fillMaxWidth()
     )
 }
+
+private fun downloadPdf(context: Context, pdfUri: Uri) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(pdfUri, "application/pdf")
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        // PDF viewer not found, handle this scenario
+        Log.e("Open PDF", "No PDF viewer found", e)
+        // You can display a toast or show a dialog to inform the user
+    }
+}
+
 

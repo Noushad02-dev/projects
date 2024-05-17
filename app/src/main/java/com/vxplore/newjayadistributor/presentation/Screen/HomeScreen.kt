@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -56,7 +57,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.debduttapanda.j3lib.NotificationService
 import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
@@ -83,6 +87,7 @@ fun HomeScreen(
     trackCountState: State<String> = stringState(key = MyDataIds.trackCountState),
     trackAmountState: State<String> = stringState(key = MyDataIds.trackAmountState),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -454,6 +459,9 @@ fun HomeScreen(
                         .padding(it)
                         .fillMaxSize()
                 ) {
+                    if (lostInternet.value) {
+                        LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+                    }
                     Spacer(modifier = Modifier.height(20.dep))
                     Row(
                         modifier = Modifier
@@ -809,6 +817,92 @@ fun HomeScreen(
                     }
                 }
             //}
+        }
+    }
+}
+
+@Composable
+fun LostInternet_ui(
+    onDismissRequest: () -> Unit,
+    notifier: NotificationService = rememberNotifier(),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet)
+) {
+
+
+    Dialog(
+        onDismissRequest = { onDismissRequest() }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(Color.White)
+        ) {
+
+            Spacer(modifier = Modifier.height(24.dep))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+
+                    ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.no_internet),
+                        contentDescription = "",
+                        modifier = Modifier
+
+                            .height(70.dep)
+                            .width(70.dep)
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(10.dep)
+                    )
+                    Text(
+                        "Please check your connection",
+                        fontSize = 20.sp,
+                        color = Color(0xFF222222),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dep)
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(32.dep)
+                    )
+                    TextButton(
+                        onClick = {
+                            notifier.notify(MyDataIds.tryagain)
+                        },
+                        colors = ButtonDefaults.buttonColors(Color(0xFFD62B2B)),
+                        modifier = Modifier
+                        //.padding(horizontal = 20.dep)
+                    ) {
+                        Text(
+                            "Try again",
+                            fontSize = 16.sep,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dep)
+                        )
+                    }
+
+                    Spacer(
+                        modifier = Modifier
+                            .height(32.dep)
+                    )
+
+                }
+            }
         }
     }
 }

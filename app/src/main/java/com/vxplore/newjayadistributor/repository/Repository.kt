@@ -16,6 +16,7 @@ import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
 import com.vxplore.newjayadistributor.model.OrderHistoryDataResponse
 import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
 import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
+import com.vxplore.newjayadistributor.model.PDFDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
 import com.vxplore.newjayadistributor.model.ShowCartDataResponse
@@ -151,5 +152,5 @@ interface Repository {
         userId: String,
         order_id: String,
         password: String,
-    ): ViewCartDataResponse?
+    ): PDFDataResponse?
 }

@@ -63,6 +63,7 @@ fun OrderDetailsScreen(
     orderAmountState: State<String> = stringState(key = MyDataIds.orderAmountState),
     countState: State<String> = stringState(key = MyDataIds.countState),
     dateState: State<String> = stringState(key = MyDataIds.dateState),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
  ) {
     Scaffold(
         topBar = {
@@ -97,6 +98,9 @@ fun OrderDetailsScreen(
         }
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         if (loadingState.value) {
             Column(
                 verticalArrangement = Arrangement.Center,

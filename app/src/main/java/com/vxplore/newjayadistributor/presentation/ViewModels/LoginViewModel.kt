@@ -34,6 +34,7 @@ class LoginViewModel @Inject constructor(
     private val otpInput = mutableStateOf("")
     private val loading = mutableStateOf(false)
     private val recoverLoading = mutableStateOf(false)
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -93,6 +94,9 @@ class LoginViewModel @Inject constructor(
 
             MyDataIds.verify -> {
                 recoverPass()
+            }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
             }
         }
     }
@@ -161,6 +165,7 @@ class LoginViewModel @Inject constructor(
             MyDataIds.recoverPassword to recoverPassword,
             MyDataIds.loading to loading,
             MyDataIds.recoverLoading to recoverLoading,
+            MyDataIds.lostInternet to lostInternet,
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
     }
@@ -198,6 +203,7 @@ class LoginViewModel @Inject constructor(
                     toast("Wrong email or password")
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.d("dbbdk", e.message.toString())
             }finally {
                 loading.value = false
@@ -217,8 +223,8 @@ class LoginViewModel @Inject constructor(
                     toast("failed to send OTP")
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("hgbj", "Error: ${e.message}")
-                toast("Check network connection")
             }
         }
     }
@@ -248,6 +254,7 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.d("dbbdk", e.message.toString())
             }
         }
@@ -258,5 +265,10 @@ class LoginViewModel @Inject constructor(
         recoverPassword.value = ""
         confirmPassword.value = ""
         otpInput.value = ""
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
+        }
     }
 }

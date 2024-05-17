@@ -52,6 +52,7 @@ fun TrackOrderScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     trackOrder: SnapshotStateList<TrackOrderDatum> = listState(key = MyDataIds.trackOrder),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     Scaffold(
         topBar = {
@@ -86,6 +87,9 @@ fun TrackOrderScreen(
         }
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         Column(
             modifier = Modifier
                 .padding(it)
@@ -105,98 +109,114 @@ fun TrackOrderScreen(
                 }
             } else {
                 Spacer(modifier = Modifier.height(20.dep))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(vertical = 10.dep),
-                    verticalArrangement = Arrangement.spacedBy(20.dep)
-                ) {
-                    itemsIndexed(trackOrder){index,it->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .shadow(
-                                    2.dep,
-                                    RoundedCornerShape(4.dep),
-                                    clip = true,
-                                    DefaultShadowColor
-                                )
-                                .clip(RoundedCornerShape(4.dep))
-                                .clickable {
-                                    notifier.notify(MyDataIds.orderTrack, index)
-                                },
-                            colors = CardDefaults.cardColors(Color.White),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 8.dep,
-                                focusedElevation = 10.dep,
-                            ),
-                            shape = RoundedCornerShape(4.dep),
-                        ){
-                            Column (
+                if (trackOrder.isEmpty()) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No orders available for track",
+                            fontSize = 16.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 10.dep),
+                        verticalArrangement = Arrangement.spacedBy(20.dep)
+                    ) {
+                        itemsIndexed(trackOrder) { index, it ->
+                            Card(
                                 modifier = Modifier
-                                    .padding(top = 8.dep, bottom = 16.dep),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ){
-                                Row (
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dep)
-                                        .fillMaxWidth()
-                                ){
-                                    Text(
-                                        text = "My Order",
-                                        fontSize = 18.sep,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.SemiBold
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        2.dep,
+                                        RoundedCornerShape(4.dep),
+                                        clip = true,
+                                        DefaultShadowColor
                                     )
-                                    Column {
+                                    .clip(RoundedCornerShape(4.dep))
+                                    .clickable {
+                                        notifier.notify(MyDataIds.orderTrack, index)
+                                    },
+                                colors = CardDefaults.cardColors(Color.White),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dep,
+                                    focusedElevation = 10.dep,
+                                ),
+                                shape = RoundedCornerShape(4.dep),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(top = 8.dep, bottom = 16.dep),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .padding(horizontal = 16.dep)
+                                            .fillMaxWidth()
+                                    ) {
                                         Text(
-                                            text = "Order # :",
-                                            fontSize = 14.sep,
+                                            text = "My Order",
+                                            fontSize = 18.sep,
                                             color = Color.Black,
                                             fontWeight = FontWeight.SemiBold
                                         )
-                                        Text(
-                                            text = it.order_id,
-                                            fontSize = 14.sep,
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.ExtraBold
-                                        )
+                                        Column {
+                                            Text(
+                                                text = "Order # :",
+                                                fontSize = 14.sep,
+                                                color = Color.Black,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                            Text(
+                                                text = it.order_id,
+                                                fontSize = 14.sep,
+                                                color = Color.Black,
+                                                fontWeight = FontWeight.ExtraBold
+                                            )
+                                        }
                                     }
-                                }
-                                Spacer(modifier = Modifier.height(20.dep))
-                                Row (
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dep)
-                                        .fillMaxWidth()
-                                ){
-                                    Row (
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Spacer(modifier = Modifier.height(20.dep))
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .padding(horizontal = 16.dep)
+                                            .fillMaxWidth()
                                     ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = "₹ ${it.order_amount_string}",
+                                                fontSize = 16.sep,
+                                                color = Color(0xFF575151),
+                                                fontWeight = FontWeight.ExtraBold
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dep))
+                                            Text(
+                                                text = "${it.count_order_item} Items",
+                                                fontSize = 12.sep,
+                                                color = Color(0xFF8E8E8E),
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
                                         Text(
-                                            text = "₹ ${it.order_amount_string}",
-                                            fontSize = 16.sep,
-                                            color = Color(0xFF575151),
-                                            fontWeight = FontWeight.ExtraBold
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dep))
-                                        Text(
-                                            text = "${it.count_order_item} Items",
+                                            text = it.order_date,
                                             fontSize = 12.sep,
                                             color = Color(0xFF8E8E8E),
                                             fontWeight = FontWeight.SemiBold
                                         )
                                     }
-                                    Text(
-                                        text = it.order_date,
-                                        fontSize = 12.sep,
-                                        color = Color(0xFF8E8E8E),
-                                        fontWeight = FontWeight.SemiBold
-                                    )
                                 }
                             }
                         }

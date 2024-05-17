@@ -16,7 +16,9 @@ import com.vxplore.newjayadistributor.Routes
 import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +41,7 @@ class OrderDetailsViewModel @Inject constructor(
     private val count = mutableStateOf("")
     private val date = mutableStateOf("")
     private val qty = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
     val taxableState: State<String> get() = taxable
     val taxState: State<String> get() = tax
     val discountState: State<String> get() = discount
@@ -68,6 +71,10 @@ class OrderDetailsViewModel @Inject constructor(
             MyDataIds.orderConfirm->{
                 orderConfirm()
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                orderDetails()
+            }
         }
     }
 
@@ -89,6 +96,7 @@ class OrderDetailsViewModel @Inject constructor(
             MyDataIds.dateState to dateState,
             MyDataIds.qtyState to qtyState,
             MyDataIds.ordersDetails to orderDtls,
+            MyDataIds.lostInternet to lostInternet,
             )
         setStatusBarColor(Color(0xFFFFEB56), true)
         orderDetails()
@@ -120,6 +128,7 @@ class OrderDetailsViewModel @Inject constructor(
                     orderDtls.addAll(response.data)
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
@@ -145,10 +154,16 @@ class OrderDetailsViewModel @Inject constructor(
                     }
                 }
             }catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

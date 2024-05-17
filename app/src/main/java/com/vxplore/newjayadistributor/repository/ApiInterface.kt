@@ -16,6 +16,7 @@ import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
 import com.vxplore.newjayadistributor.model.OrderHistoryDataResponse
 import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
 import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
+import com.vxplore.newjayadistributor.model.PDFDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
 import com.vxplore.newjayadistributor.model.ShowCartDataResponse
@@ -215,5 +216,5 @@ interface ApiInterface {
         @Query("user_id") user_id: String,
         @Query("order_id") order_id : String,
         @Query("password") password : String,
-    ): Response<MyStockListDataResponse>
+    ): Response<PDFDataResponse>
 }

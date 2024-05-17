@@ -17,6 +17,7 @@ import com.vxplore.newjayadistributor.model.OrderDetailsDataResponse
 import com.vxplore.newjayadistributor.model.OrderHistoryDataResponse
 import com.vxplore.newjayadistributor.model.OrderReceiveDataResponse
 import com.vxplore.newjayadistributor.model.OrderStatusDataResponse
+import com.vxplore.newjayadistributor.model.PDFDataResponse
 import com.vxplore.newjayadistributor.model.ProductDataResponse
 import com.vxplore.newjayadistributor.model.ResetDataResponse
 import com.vxplore.newjayadistributor.model.ShowCartDataResponse
@@ -414,6 +415,15 @@ class MockRepositoryImpl @Inject constructor(
         password: String
     ): MyStockListDataResponse? {
         val response = apiHelper.myStockList(userId,order_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun pdf(userId: String, order_id: String, password: String): PDFDataResponse? {
+        val response = apiHelper.pdf(userId,order_id, password)
         return if (response.isSuccessful){
             response.body()
         }else{

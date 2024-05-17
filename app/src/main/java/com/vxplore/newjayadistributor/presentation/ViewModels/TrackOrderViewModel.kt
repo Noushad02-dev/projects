@@ -15,7 +15,9 @@ import com.vxplore.newjayadistributor.model.DueDatum
 import com.vxplore.newjayadistributor.model.TrackOrderDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +29,7 @@ class TrackOrderViewModel @Inject constructor(
     private val indexRouteId = mutableStateOf(0)
     private val password = mutableStateOf("")
     private val userId = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -50,6 +53,10 @@ class TrackOrderViewModel @Inject constructor(
                     navigate(Routes.orderStatus.full)
                 }
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                dueDelivery()
+            }
         }
     }
 
@@ -59,6 +66,7 @@ class TrackOrderViewModel @Inject constructor(
         mapData(
             MyDataIds.loadingState to loadingState,
             MyDataIds.trackOrder to trackOrder,
+            MyDataIds.lostInternet to lostInternet,
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
         dueDelivery()
@@ -80,10 +88,15 @@ class TrackOrderViewModel @Inject constructor(
                     }
                 }
             }catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

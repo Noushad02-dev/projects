@@ -55,6 +55,7 @@ fun DeliveryPointsScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     locationList: SnapshotStateList<LocationDatum> = listState(key = MyDataIds.locationList),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     Scaffold(
         topBar = {
@@ -107,6 +108,9 @@ fun DeliveryPointsScreen(
         floatingActionButtonPosition = FabPosition.End
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         Column(
             modifier = Modifier
                 .padding(it)
@@ -125,35 +129,51 @@ fun DeliveryPointsScreen(
                 }
             } else {
                 Spacer(modifier = Modifier.height(20.dep))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(vertical = 10.dep),
-                    verticalArrangement = Arrangement.spacedBy(20.dep)
-                ) {
-                    items(locationList) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            //horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .padding(horizontal = 12.dep)
-                                .fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.location),
-                                contentDescription = "Location"
-                            )
-                            Spacer(modifier = Modifier.width(16.dep))
-                            Text(
-                                text = "${it.name} - ${it.state} - ${it.pincode}",
-                                fontSize = 16.sep,
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                            )
+                if (locationList.isEmpty()) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No Delivery points available",
+                            fontSize = 16.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 10.dep),
+                        verticalArrangement = Arrangement.spacedBy(20.dep)
+                    ) {
+                        items(locationList) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                //horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dep)
+                                    .fillMaxWidth()
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.location),
+                                    contentDescription = "Location"
+                                )
+                                Spacer(modifier = Modifier.width(16.dep))
+                                Text(
+                                    text = "${it.name} - ${it.state} - ${it.pincode}",
+                                    fontSize = 16.sep,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(12.dep))
+                            Divider()
+                            Spacer(modifier = Modifier.height(12.dep))
                         }
-                        Spacer(modifier = Modifier.height(12.dep))
-                        Divider()
-                        Spacer(modifier = Modifier.height(12.dep))
                     }
                 }
             }

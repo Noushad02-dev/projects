@@ -79,6 +79,7 @@ fun MyStockScreen(
     categoryList: SnapshotStateList<CategoriesDataResponse.CategoriesData> = listState(key = MyDataIds.categoryList),
     selectedTabIndex: State<Int> = intState(key = MyDataIds.brandChange),
     productList: SnapshotStateList<MyStockDatum> = listState(key = MyDataIds.productList),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     var selectedItem by remember { mutableStateOf(0) }
     Scaffold(
@@ -126,6 +127,9 @@ fun MyStockScreen(
                     .padding(12.dep)
             ){*/
 
+            if (lostInternet.value) {
+                LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+            }
             Spacer(modifier = Modifier.height(16.dep))
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex.value,
@@ -178,8 +182,22 @@ fun MyStockScreen(
                     )
                 }
             } else {
-                // }
                 Spacer(modifier = Modifier.height(16.dep))
+                if (productList.isEmpty()) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No product(s) available",
+                            fontSize = 16.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                } else {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -273,6 +291,7 @@ fun MyStockScreen(
                         )
                     }
                 }
+            }
             }
         }
 

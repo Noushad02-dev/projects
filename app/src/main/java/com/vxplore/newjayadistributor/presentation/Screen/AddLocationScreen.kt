@@ -68,6 +68,7 @@ fun AddLocationScreen(
     notifier: NotificationService = rememberNotifier(),
     loadingState: State<Boolean> = boolState(key = MyDataIds.loadingState),
     addLocationList: SnapshotStateList<LocData> = listState(key = MyDataIds.addLocationList),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     Scaffold(
         topBar = {
@@ -102,6 +103,9 @@ fun AddLocationScreen(
         },
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         Column(
             modifier = Modifier
                 .padding(it)
@@ -129,59 +133,76 @@ fun AddLocationScreen(
                 }
             } else {
                 Spacer(modifier = Modifier.height(20.dep))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(vertical = 10.dep),
-                    verticalArrangement = Arrangement.spacedBy(20.dep)
-                ) {
-                    itemsIndexed(addLocationList) { index, it ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
+                if (addLocationList.isEmpty()) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No location available available",
+                            fontSize = 16.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 10.dep),
+                        verticalArrangement = Arrangement.spacedBy(20.dep)
+                    ) {
+                        itemsIndexed(addLocationList) { index, it ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.location),
-                                    contentDescription = "Location"
-                                )
-                                Spacer(modifier = Modifier.width(16.dep))
-                                Text(
-                                    text = "${it.name} - ${it.state} - ${it.pincode}",
-                                    fontSize = 16.sep,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.Bold,
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.location),
+                                        contentDescription = "Location"
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dep))
+                                    Text(
+                                        text = "${it.name} - ${it.state} - ${it.pincode}",
+                                        fontSize = 16.sep,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold,
+                                    )
+                                }
+                                RadioButton(
+                                    selected = it.selected,
+                                    onClick = {
+                                        val updatedList =
+                                            addLocationList.mapIndexed { index, listItem ->
+                                                listItem.copy(
+                                                    selected = (index == addLocationList.indexOf(
+                                                        it
+                                                    ))
+                                                )
+                                            }
+                                        addLocationList.clear()
+                                        addLocationList.addAll(updatedList)
+                                        notifier.notify(MyDataIds.routeId, index)
+                                    },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = Color(0XFFD62B2B),
+                                        unselectedColor = Color(0xFF707070)
+                                    ),
+                                    modifier = Modifier
+                                        .size(24.dep)
                                 )
                             }
-                            RadioButton(
-                                selected = it.selected,
-                                onClick = {
-                                    val updatedList = addLocationList.mapIndexed { index, listItem ->
-                                        listItem.copy(
-                                            selected = (index == addLocationList.indexOf(
-                                                it
-                                            ))
-                                        )
-                                    }
-                                    addLocationList.clear()
-                                    addLocationList.addAll(updatedList)
-                                    notifier.notify(MyDataIds.routeId, index)
-                                },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = Color(0XFFD62B2B),
-                                    unselectedColor = Color(0xFF707070)
-                                ),
-                                modifier = Modifier
-                                    .size(24.dep)
-                            )
+                            Spacer(modifier = Modifier.height(12.dep))
+                            Divider()
+                            Spacer(modifier = Modifier.height(12.dep))
                         }
-                        Spacer(modifier = Modifier.height(12.dep))
-                        Divider()
-                        Spacer(modifier = Modifier.height(12.dep))
                     }
                 }
             }

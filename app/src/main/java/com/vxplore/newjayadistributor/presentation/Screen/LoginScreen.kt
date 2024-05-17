@@ -53,6 +53,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import com.debduttapanda.j3lib.NotificationService
+import com.debduttapanda.j3lib.boolState
 import com.debduttapanda.j3lib.dep
 import com.debduttapanda.j3lib.rememberBoolState
 import com.debduttapanda.j3lib.rememberNotifier
@@ -73,8 +74,12 @@ fun LoginPage(
     recoverPasswordDialog: State<Boolean> = rememberBoolState(id = MyDataIds.recoverpasswordDialog),
     otpValue: State<String> = rememberStringState(id = MyDataIds.otpIntput),
     loading: State<Boolean> = rememberBoolState(id = MyDataIds.loading),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
     notifier: NotificationService = rememberNotifier()
 ) {
+    if (lostInternet.value) {
+        LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+    }
     RecoverPasswordDialog(
         appearDialog = recoverPasswordDialog.value,
         recoverUserName.value,

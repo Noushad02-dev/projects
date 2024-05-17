@@ -1,6 +1,7 @@
 package com.vxplore.newjayadistributor.presentation.ViewModels
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
@@ -8,7 +9,7 @@ import com.debduttapanda.j3lib.InterCom
 import com.debduttapanda.j3lib.WirelessViewModel
 import com.debduttapanda.j3lib.models.EventBusDescription
 import com.debduttapanda.j3lib.models.Route
-import com.google.android.datatransport.BuildConfig
+import com.vxplore.newjayadistributor.BuildConfig
 import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.Routes
 import com.vxplore.newjayadistributor.repository.Repository
@@ -45,6 +46,7 @@ class SplashViewModel @Inject constructor(
         )
         setStatusBarColor(Color(0xFFFFEB56), true)
         versionName.value = BuildConfig.VERSION_NAME
+        Log.d("cdhnju",versionName.value)
         viewModelScope.launch {
             delay(3000)
             goToProperLogin()

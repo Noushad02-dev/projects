@@ -14,7 +14,9 @@ import com.vxplore.newjayadistributor.MyDataIds
 import com.vxplore.newjayadistributor.model.OrderDetailsDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +39,7 @@ class OrderDetailsHistoryViewModel @Inject constructor(
     private val orderAmount = mutableStateOf("")
     private val count = mutableStateOf("")
     private val date = mutableStateOf("")
+    private val lostInternet = mutableStateOf(false)
     val taxableState: State<String> get() = taxable
     val taxState: State<String> get() = tax
     val discountState: State<String> get() = discount
@@ -62,6 +65,10 @@ class OrderDetailsHistoryViewModel @Inject constructor(
             MyDataIds.back -> {
                 popBackStack()
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                orderDetails()
+            }
         }
     }
 
@@ -81,6 +88,7 @@ class OrderDetailsHistoryViewModel @Inject constructor(
             MyDataIds.countState to countState,
             MyDataIds.dateState to dateState,
             MyDataIds.ordersDetails to orderDtls,
+            MyDataIds.lostInternet to lostInternet,
         )
         orderDetails()
     }
@@ -98,7 +106,6 @@ class OrderDetailsHistoryViewModel @Inject constructor(
                     tax.value = response.data.joinToString { it.taxes_amount_string }
                     discount.value = response.data.joinToString { it.discount_amount_string }
                     total.value = response.data.joinToString { it.total_amount_string }
-
                     storeName.value = response.data.joinToString { it.store_name }
                     orderId.value = response.data.joinToString { it.order_id }
                     route.value = response.data.joinToString { it.route }
@@ -109,10 +116,16 @@ class OrderDetailsHistoryViewModel @Inject constructor(
                     orderDtls.addAll(response.data)
                 }
             } catch (e: Exception) {
+                handleNoConnectivity()
                 Log.e("ViewModel", "Error fetching order details: ${e.message}")
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

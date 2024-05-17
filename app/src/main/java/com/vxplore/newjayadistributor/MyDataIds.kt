@@ -103,4 +103,8 @@ enum class MyDataIds {
     addProductList,
     search,
     orderHistoryList,
+    downloadPdf,
+    pdfState,
+    lostInternet,
+    tryagain,
 }

@@ -90,6 +90,7 @@ fun CartReviewScreen(
     taxState: State<String> = stringState(key = MyDataIds.taxState),
     discountState: State<String> = stringState(key = MyDataIds.discountState),
     totalState: State<String> = stringState(key = MyDataIds.totalState),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
     Scaffold(
         topBar = {
@@ -144,8 +145,9 @@ fun CartReviewScreen(
         }
     )
     {
-
-
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         if (loadingState.value) {
             Column(
                 verticalArrangement = Arrangement.Center,

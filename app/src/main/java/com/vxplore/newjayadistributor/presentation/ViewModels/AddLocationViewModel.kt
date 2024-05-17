@@ -15,7 +15,9 @@ import com.vxplore.newjayadistributor.model.LocData
 import com.vxplore.newjayadistributor.model.LocationDatum
 import com.vxplore.newjayadistributor.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +31,7 @@ class AddLocationViewModel @Inject constructor(
     private val locationSearch = mutableStateOf("")
     private val locationId = mutableStateOf("")
     private val indexRouteId = mutableStateOf(0)
+    private val lostInternet = mutableStateOf(false)
     override fun eventBusDescription(): EventBusDescription? {
         return null
     }
@@ -59,6 +62,10 @@ class AddLocationViewModel @Inject constructor(
                 repo.setLocationId(lId)
                 Log.d("cdhubgc",lId)
             }
+            MyDataIds.tryagain -> {
+                lostInternet.value = false
+                addLocationList()
+            }
         }
     }
 
@@ -70,6 +77,7 @@ class AddLocationViewModel @Inject constructor(
             MyDataIds.loadingState to loadingState,
             MyDataIds.locationSearch to locationSearch,
             MyDataIds.addLocationList to addLocationList,
+            MyDataIds.lostInternet to lostInternet,
         )
         addLocationList()
     }
@@ -90,7 +98,7 @@ class AddLocationViewModel @Inject constructor(
                     Log.d("kjicdn", locationIds)*/
                 }
             } catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
@@ -117,10 +125,15 @@ class AddLocationViewModel @Inject constructor(
                 }
             }
             catch (e: Exception) {
-                //todo
+                handleNoConnectivity()
             } finally {
                 loadingState.value = false
             }
+        }
+    }
+    private suspend fun handleNoConnectivity() {
+        withContext(Dispatchers.Main) {
+            lostInternet.value = true
         }
     }
 }

@@ -85,6 +85,7 @@ fun PlaceOrderScreen(
     selectedCategoryId: State<String> = stringState(key = MyDataIds.selectedCategoryId),
     productList: SnapshotStateList<Datum> = listState(key = MyDataIds.productList),
     selectedTabIndex: State<Int> = intState(key = MyDataIds.brandChange),
+    lostInternet: State<Boolean> = boolState(key = MyDataIds.lostInternet),
 ) {
 
     val viewModel: PlaceOrderViewModel = viewModel()
@@ -122,6 +123,9 @@ fun PlaceOrderScreen(
         }
     )
     {
+        if (lostInternet.value) {
+            LostInternet_ui(onDismissRequest = { notifier.notify(MyDataIds.onDissmiss) })
+        }
         Column(
             modifier = Modifier
                 .padding(it)
@@ -200,111 +204,132 @@ fun PlaceOrderScreen(
                     color = Color(0xFFEAEAEA)
                 )
                 Spacer(modifier = Modifier.height(16.dep))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 60.dep),
-                    verticalArrangement = Arrangement.spacedBy(20.dep)
-                ) {
-                    itemsIndexed(productList) { index, it ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dep)
-                                .fillMaxWidth()
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                            ) {
-                                AsyncImage(
-                                    model = it.image,
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .height(60.dep)
-                                        .width(64.dep)
-                                )
-                                Spacer(modifier = Modifier.width(8.dep))
-                                Column {
-                                    Text(
-                                        text = if (it.name.length > 13) "${it.name.take(13)}..." else it.name,
-                                        fontSize = 13.sep,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
 
-                                    Text(
-                                        text = it.code,
-                                        fontSize = 13.sep,
-                                        color = Color.Black,
-                                        //fontWeight = FontWeight.ExtraBold
-                                    )
-                                    Text(
-                                        text = it.info,
-                                        fontSize = 10.sep,
-                                        color = Color.Black,
-                                        //fontWeight = FontWeight.ExtraBold
-                                    )
-                                }
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                            ) {
-                                var text by remember { mutableStateOf("CB") }
-
-                                Box(
-                                    modifier = Modifier
-                                        .border(1.dp, Color(0xFFD1D1D1), RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 16.dp)
-                                        .padding(vertical = 14.dp)
-                                        .clickable {
-                                            val newText = if (text == "CB") {
-                                                viewModel.setSelectedText("Pcs", "unit_pcs")
-                                                "Pcs"
-                                            } else {
-                                                viewModel.setSelectedText("CB", "unit_cb")
-                                                "CB"
-                                            }
-                                            text = newText
-                                        }
-                                ) {
-                                    Text(
-                                        text = text/*it.unit.joinToString { unit -> unit.name }*/,
-                                        fontSize = 12.sep,
-                                        color = Color.Black,
-                                        modifier = Modifier
-                                        //.padding(horizontal = 16.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(12.dep))
-                                Box(
-                                    modifier = Modifier
-                                        .border(1.dep, Color.LightGray)
-                                        .height(58.dep)
-                                        .width(64.dep)
-                                ) {
-                                    ProductList(
-                                        it,
-                                        onQuantityChange = {},
-                                        index = index,
-                                        it
-                                    )
-                                }
-
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(12.dep))
-                        Divider(
-                            thickness = .8.dep,
-                            color = Color(0xFFEAEAEA)
+                if (productList.isEmpty()) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No product(s) available",
+                            fontSize = 16.sep,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(bottom = 60.dep),
+                        verticalArrangement = Arrangement.spacedBy(20.dep)
+                    ) {
+                        itemsIndexed(productList) { index, it ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dep)
+                                    .fillMaxWidth()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                ) {
+                                    AsyncImage(
+                                        model = it.image,
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .height(60.dep)
+                                            .width(64.dep)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dep))
+                                    Column {
+                                        Text(
+                                            text = if (it.name.length > 13) "${it.name.take(13)}..." else it.name,
+                                            fontSize = 13.sep,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+
+                                        Text(
+                                            text = it.code,
+                                            fontSize = 13.sep,
+                                            color = Color.Black,
+                                            //fontWeight = FontWeight.ExtraBold
+                                        )
+                                        Text(
+                                            text = it.info,
+                                            fontSize = 10.sep,
+                                            color = Color.Black,
+                                            //fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                ) {
+                                    var text by remember { mutableStateOf("CB") }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .border(
+                                                1.dp,
+                                                Color(0xFFD1D1D1),
+                                                RoundedCornerShape(4.dp)
+                                            )
+                                            .padding(horizontal = 16.dp)
+                                            .padding(vertical = 14.dp)
+                                            .clickable {
+                                                val newText = if (text == "CB") {
+                                                    viewModel.setSelectedText("Pcs", "unit_pcs")
+                                                    "Pcs"
+                                                } else {
+                                                    viewModel.setSelectedText("CB", "unit_cb")
+                                                    "CB"
+                                                }
+                                                text = newText
+                                            }
+                                    ) {
+                                        Text(
+                                            text = text/*it.unit.joinToString { unit -> unit.name }*/,
+                                            fontSize = 12.sep,
+                                            color = Color.Black,
+                                            modifier = Modifier
+                                            //.padding(horizontal = 16.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dep))
+                                    Box(
+                                        modifier = Modifier
+                                            .border(1.dep, Color.LightGray)
+                                            .height(58.dep)
+                                            .width(64.dep)
+                                    ) {
+                                        ProductList(
+                                            it,
+                                            onQuantityChange = {},
+                                            index = index,
+                                            it
+                                        )
+                                    }
+
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dep))
+                            Divider(
+                                thickness = .8.dep,
+                                color = Color(0xFFEAEAEA)
+                            )
+                        }
                     }
                 }
             }
