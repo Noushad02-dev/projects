@@ -96,6 +96,14 @@ class MockRepositoryImpl @Inject constructor(
        return myPref.getLocationId()
     }
 
+    override fun setSelectedLocationId(selectedLocationId: String?) {
+        myPref.setSelectedLocationId(selectedLocationId)
+    }
+
+    override fun getSelectedLocationId(): String? {
+        return myPref.getSelectedLocationId()
+    }
+
     override fun setOrderReceivedId(orderReceivedId: String?) {
         myPref.setOrderReceivedId(orderReceivedId)
     }

@@ -84,8 +84,8 @@ class CartReviewViewModel @Inject constructor(
 
             MyDataIds.selectLocationId -> {
                 index.value = arg as String
-                Log.d("dvfv", index.value)
-                repo.setLocationId(index.value)
+                locationId.value = index.value
+                Log.d("yghnjg", index.value)
             }
             MyDataIds.tryagain -> {
                 lostInternet.value = false
@@ -186,8 +186,7 @@ class CartReviewViewModel @Inject constructor(
     private fun placeOrder() {
         userId.value = repo.getUserId()!!
         password.value = repo.getPassCode()!!
-        locationId.value = repo.getLocationId()!!
-        Log.d("dvfv", locationId.value)
+        Log.d("bgvbvg", locationId.value)
         loadingState.value = true
         viewModelScope.launch {
             try {
@@ -205,9 +204,12 @@ class CartReviewViewModel @Inject constructor(
                 handleNoConnectivity()
             } finally {
                 loadingState.value = false
+                locationId.value = ""
+                Log.d("dvfv", locationId.value)
             }
         }
     }
+
     private suspend fun handleNoConnectivity() {
         withContext(Dispatchers.Main) {
             lostInternet.value = true

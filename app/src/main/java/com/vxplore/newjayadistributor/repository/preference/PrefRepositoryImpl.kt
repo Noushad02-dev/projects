@@ -17,6 +17,7 @@ class PrefRepositoryImpl @Inject constructor(
     private val LocationId = "LocationId"
     private val OrderReceivedId = "OrderReceivedId"
     private val ProductId = "ProductId"
+    private val SelectedLocationId = "SelectedLocationId"
     private lateinit var myPref: SharedPreferences
 
     init {
@@ -88,6 +89,14 @@ class PrefRepositoryImpl @Inject constructor(
 
     override fun getLocationId(): String? {
         return myPref.getString(LocationId,"")
+    }
+
+    override fun setSelectedLocationId(selectedLocationId: String?) {
+        myPref.edit().putString(SelectedLocationId,selectedLocationId.toString()).apply()
+    }
+
+    override fun getSelectedLocationId(): String? {
+        return myPref.getString(SelectedLocationId,"")
     }
 
     override fun setOrderReceivedId(orderReceivedId: String?) {
