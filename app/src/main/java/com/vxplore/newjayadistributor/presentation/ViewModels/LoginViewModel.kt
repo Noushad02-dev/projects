@@ -179,6 +179,7 @@ class LoginViewModel @Inject constructor(
                     Log.d("hujf", response.toString())
                     loading.value = !loading.value
                     repo.saveUser(response.user_id)
+                    repo.saveUser(response.user_id)
                     viewModelScope.launch {
                        // delay(3000)
                         repo.setIsLoggedIn(true)
