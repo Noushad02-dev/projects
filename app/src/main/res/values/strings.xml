@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">NewJaya Distributor</string>
+    <string name="welcome">Welcome to Jaya Industries</string>
+    <string name="login">Login here</string>
+    <string name="licence">All Rights Reserved by Jaya Industries Pvt Ltd</string>
+    <string name="verify_otp">Please Verify your OTP</string>
+    <string name="verify">Verify Now</string>
+    <string name="resend">Resend OTP</string>
 </resources>

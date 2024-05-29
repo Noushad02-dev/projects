@@ -71,7 +71,7 @@ class HomeViewModel @Inject constructor(
             MyDataIds.Confirm -> {
                 opendialog.value = !opendialog.value
                 navigation {
-                    navigate(Routes.login.full) {
+                    navigate(Routes.enterNumber.full) {
                         popUpTo(Routes.home.full)
                     }
                 }
@@ -172,7 +172,7 @@ class HomeViewModel @Inject constructor(
         repo.setIsLoggedIn(false)
         repo.removeUser()
         navigation {
-            navigate(Routes.login.full) {
+            navigate(Routes.enterNumber.full) {
                 popUpTo(Routes.home.full)
             }
         }
@@ -182,13 +182,16 @@ class HomeViewModel @Inject constructor(
         loadingState.value = true
         viewModelScope.launch {
             user_id.value = repo.getUserId()!!
+            Log.d("dcyhd",user_id.value)
             password.value = repo.getPassCode()!!
+            Log.d("dcyhd",password.value)
             try {
                 val response =  repo.dashBoard(user_id.value,password.value)
                 if (response?.status == true){
                     val list = response.data
                     receivedCount.value = list.order_received.count.toString()
                     receivedAmount.value = list.order_received.amount_string
+                    Log.d("dcyhd",receivedAmount.value)
                     StockCount.value = list.my_stock.count.toString()
                     StockAmount.value = list.my_stock.amount_string
                     dueDeliveryCount.value = list.due_delivery.count.toString()

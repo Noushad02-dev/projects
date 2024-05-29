@@ -21,4 +21,6 @@ object Routes {
     val addLocation = Route("addLocation")
     val orderHistory = Route("orderHistory")
     val orderDetailsHistory = Route("orderDetailsHistory")
+    val enterNumber = Route("enterNumber")
+    val otp = Route("otp")
 }

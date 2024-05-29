@@ -51,6 +51,8 @@ interface Repository {
     fun getOrderReceivedId() : String?
     fun setProductId(productId: String?)
     fun getProductId() : String?
+    fun setMobileNo(mobileNo: String?)
+    fun getMobileNo() : String?
 
 
     suspend fun login(email : String, password : String) : LoginDataResponse?
@@ -156,4 +158,7 @@ interface Repository {
         order_id: String,
         password: String,
     ): PDFDataResponse?
+
+    suspend fun mobileVerify(mobile: String) : ResetDataResponse?
+    suspend fun otpVerify(mobile: String,otp: String) : LoginDataResponse?
 }

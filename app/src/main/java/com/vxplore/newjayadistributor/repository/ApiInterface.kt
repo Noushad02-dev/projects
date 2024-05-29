@@ -217,4 +217,14 @@ interface ApiInterface {
         @Query("order_id") order_id : String,
         @Query("password") password : String,
     ): Response<PDFDataResponse>
+
+    @GET("distributor/send_otp")
+    suspend fun mobileVerify(
+        @Query("mobile") mobile: String,
+    ): Response<ResetDataResponse>
+    @GET("distributor/verify_otp")
+    suspend fun otpVerify(
+        @Query("mobile") mobile: String,
+        @Query("otp") otp: String,
+    ): Response<LoginDataResponse>
 }

@@ -10,6 +10,7 @@ import com.vxplore.newjayadistributor.presentation.Screen.CartReviewScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DeliveryPointsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryDetailsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.DueDeliveryScreen
+import com.vxplore.newjayadistributor.presentation.Screen.EnterNumberScreen
 import com.vxplore.newjayadistributor.presentation.Screen.HomeScreen
 import com.vxplore.newjayadistributor.presentation.Screen.LoginPage
 import com.vxplore.newjayadistributor.presentation.Screen.MyOffersScreen
@@ -19,6 +20,7 @@ import com.vxplore.newjayadistributor.presentation.Screen.OrderDetailsScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderHistoryScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderReceiveScreen
 import com.vxplore.newjayadistributor.presentation.Screen.OrderStatusScreen
+import com.vxplore.newjayadistributor.presentation.Screen.OtpScreen
 import com.vxplore.newjayadistributor.presentation.Screen.PlaceOrderScreen
 import com.vxplore.newjayadistributor.presentation.Screen.SplashScreen
 import com.vxplore.newjayadistributor.presentation.Screen.ThankYouScreen
@@ -28,6 +30,7 @@ import com.vxplore.newjayadistributor.presentation.ViewModels.CartReviewViewMode
 import com.vxplore.newjayadistributor.presentation.ViewModels.DeliveryPointsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryDetailsViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.DueDeliveryViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.EnterNumberViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.HomeViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.LoginViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.MyOffersViewModels
@@ -37,6 +40,7 @@ import com.vxplore.newjayadistributor.presentation.ViewModels.OrderDetailsViewMo
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderHistoryViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderReceiveViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.OrderStatusViewModel
+import com.vxplore.newjayadistributor.presentation.ViewModels.OtpViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.PlaceOrderViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.SplashViewModel
 import com.vxplore.newjayadistributor.presentation.ViewModels.ThankYouViewModel
@@ -60,6 +64,20 @@ fun MyApp() {
             wirelessViewModel = { hiltViewModel<LoginViewModel>() }
         ) {
             LoginPage()
+        }
+
+        MyScreen(
+            navController, Routes.enterNumber,
+            wirelessViewModel = { hiltViewModel<EnterNumberViewModel>() }
+        ) {
+            EnterNumberScreen()
+        }
+
+        MyScreen(
+            navController, Routes.otp,
+            wirelessViewModel = { hiltViewModel<OtpViewModel>() }
+        ) {
+            OtpScreen()
         }
         MyScreen(
             navController, Routes.home,

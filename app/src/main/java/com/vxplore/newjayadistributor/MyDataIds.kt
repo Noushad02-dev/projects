@@ -107,4 +107,9 @@ enum class MyDataIds {
     pdfState,
     lostInternet,
     tryagain,
+    number,
+    btnVerify,
+    otp,
+    numberState,
+    resend,
 }

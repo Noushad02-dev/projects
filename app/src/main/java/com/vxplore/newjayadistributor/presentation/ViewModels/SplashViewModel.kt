@@ -62,7 +62,7 @@ class SplashViewModel @Inject constructor(
             }
         } else {
             navigation {
-                navigate(Routes.login.full) {
+                navigate(Routes.enterNumber.full) {
                     popUpTo(Routes.splash.full)
                 }
             }

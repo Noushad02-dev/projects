@@ -30,4 +30,6 @@ interface PrefRepository {
     fun getOrderReceivedId() : String?
     fun setProductId(productId: String?)
     fun getProductId() : String?
+    fun setMobileNo(mobileNo: String?)
+    fun getMobileNo() : String?
 }

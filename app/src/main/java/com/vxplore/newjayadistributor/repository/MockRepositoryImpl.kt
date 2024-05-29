@@ -120,6 +120,14 @@ class MockRepositoryImpl @Inject constructor(
         return myPref.getProductId()
     }
 
+    override fun setMobileNo(mobileNo: String?) {
+        myPref.setMobileNo(mobileNo)
+    }
+
+    override fun getMobileNo(): String? {
+        return myPref.getMobileNo()
+    }
+
     override suspend fun login(email: String, password: String): LoginDataResponse? {
         val response = apiHelper.Login(email, password)
         return if (response.isSuccessful) {
@@ -432,6 +440,24 @@ class MockRepositoryImpl @Inject constructor(
 
     override suspend fun pdf(userId: String, order_id: String, password: String): PDFDataResponse? {
         val response = apiHelper.pdf(userId,order_id, password)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun mobileVerify(mobile: String): ResetDataResponse? {
+        val response = apiHelper.mobileVerify(mobile)
+        return if (response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+    }
+
+    override suspend fun otpVerify(mobile: String, otp: String): LoginDataResponse? {
+        val response = apiHelper.otpVerify(mobile, otp)
         return if (response.isSuccessful){
             response.body()
         }else{
