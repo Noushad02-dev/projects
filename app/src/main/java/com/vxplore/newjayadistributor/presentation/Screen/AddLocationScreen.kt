@@ -177,7 +177,7 @@ fun AddLocationScreen(
                                     )
                                 }
                                 RadioButton(
-                                    selected = it.selected,
+                                     selected = it.selected,
                                     onClick = {
                                         val updatedList =
                                             addLocationList.mapIndexed { index, listItem ->
